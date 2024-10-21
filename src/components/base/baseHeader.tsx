@@ -15,7 +15,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import {FormControl, MenuItem, Select, useColorScheme } from '@mui/material';
 import {useTranslation} from 'react-i18next'
-import { Link,useNavigate } from 'react-router-dom';
+import { Link,useLocation,useNavigate } from 'react-router-dom';
 
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
@@ -32,9 +32,9 @@ function BaseHeader(){
   const { mode, setMode } = useColorScheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [language,setLanguage] = useState("en")
-  
   const navigate = useNavigate()
   const {t,i18n:{changeLanguage}} = useTranslation();
+  const location = useLocation()
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
   }
@@ -88,7 +88,7 @@ function BaseHeader(){
       <Divider />
       <List>
         {navItems.map((item) => (
-            <ListItem  disablePadding>
+            <ListItem key={item.alt}  disablePadding>
                 <ListItemButton onClick={()=>navigate(item.path)} sx={{ textAlign: 'center' }}>
                   <ListItemText primary={t(item.name)} />
                 </ListItemButton>
@@ -106,7 +106,7 @@ function BaseHeader(){
   return (
     <Box className="app-header" sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar component="nav">
+      <AppBar className='app-bar' sx={{background: 'linear-gradient(to bottom,#0033A0, #001F3F)',}} component="nav">
         <Toolbar>
           <IconButton
             color="inherit"
@@ -121,13 +121,13 @@ function BaseHeader(){
             variant="h6"
             component="div"
             sx={{ flexGrow: 1, display: 'block' }}
-          >
+            >
             LUCKY BRICK
           </Typography>
           <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
             {navItems.map((item,index) => (
               <Link to={item.path} key={index+item.name}>
-                <Button sx={{color: '#fff' }}>
+                <Button sx={{color: `${location.pathname == item.path?"#007bff":'#fff'}`}}>
                   {t(item.name)}
                 </Button>
               </Link>

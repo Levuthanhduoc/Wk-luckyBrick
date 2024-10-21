@@ -1,0 +1,10 @@
+#root{
+    font-family: 'Roboto', 'Helvetica', 'Arial', 'Times New Roman', 'Georgia', 'Courier New', 'Consolas', 'Bebas Neue', 'Playfair Display', sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.app-content{
+    flex: 1;
+}

@@ -11,6 +11,15 @@ const BaseContent = React.lazy(()=>import('./components/base/baseContent'))
 
 function App() {
   const theme = createTheme({
+    components:{
+      MuiCssBaseline:{
+        styleOverrides:{
+          body:{
+            backgroundImage: `linear-gradient(to bottom, #0A1D2E, #001F3F, #0033A0)`,
+          }
+        }
+      }
+    },
     colorSchemes: {
       dark: {
         palette: {
@@ -23,7 +32,7 @@ function App() {
           },
           background: {
             default: '#0d1b2a', 
-            paper: '#0d47a1',   
+            paper: '#007BFF',   
           },
           text: {
             primary: '#ffffff', 

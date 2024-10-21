@@ -10,10 +10,12 @@ import masterCardIcon from '../../assets/image/icon/Mastercard.png';
 import visaIcon from '../../assets/image/icon/visa.png';
 import momoIcon from '../../assets/image/icon/momo.png';
 import zalopayIcon from '../../assets/image/icon/zalo.png';
+import { useTranslation } from "react-i18next";
 
 
 function BaseFooter(){
     const {mode}= useColorScheme()
+    const {t} = useTranslation()
 
     const followUs = [
         {name:"facebook",icon:<FacebookRoundedIcon/>},
@@ -22,24 +24,24 @@ function BaseFooter(){
         {name:"tiktok",icon:<SvgIcon ><TiktokIcon/></SvgIcon>}
     ]
     const companyInfo = [
-        {name:"Address",detail:"1234 shop, brick 567,White York, NY 69024"},
+        {name:t("common.address"),detail:"1234 shop, brick 567,White York, NY 69024"},
         {name:"Email",detail:"luckyBrick@hamil.com"},
-        {name:"Phone",detail:"000000000000"},
+        {name:t("common.phone"),detail:"000000000000"},
     ]
     const exInfo = [{
-        title:"Help",
+        title:t("common.help"),
         content:[
-            {name:"Privacy Policy",path:""},
-            {name:"Returns",path:""},
-            {name:"Terms & Conditions",path:""},
-            {name:"Shipping",path:""},
-            {name:"FAQ\u0027s",path:""}
+            {name:t("common.privacyPolicy"),path:""},
+            {name:t("common.returns"),path:""},
+            {name:t("common.termsConditions"),path:""},
+            {name:t("common.shipping"),path:""},
+            {name:t("common.FAQ"),path:""}
         ]
     },{
-        title:"About us",
+        title:t("common.aboutUs"),
         content:[
-            {name:"Contact Us",path:""},
-            {name:"Account",path:""},
+            {name:t("common.contactUs"),path:""},
+            {name:t("common.account"),path:""},
         ]
     }
     ]
@@ -53,9 +55,14 @@ function BaseFooter(){
 
     return(
         <>  
-            <Box className="app-footer" sx={{ height:"100%",backgroundColor:`${mode=="light"?"#0d47a1":"#0a3057"}`,color:"#fff", padding:{md:"0 10vw 0 10vw"}}}>
-                <Box sx={{padding:{xs:"20px" ,sm:"40px",md:"50px"}}}>
-                    <Grid2 container spacing={{xs:2,sm:2,md:3}} columns={{xs:1,sm:2,md:4,lg:6}} sx={{paddingBottom:"20px"}}>
+            <Box className="app-footer" 
+                sx={{ height:"100%",backgroundColor:`${mode=="light"?"#0d47a1":"#002d85"}`,
+                        color:"#fff", 
+                        padding:{sm:"45px 15px 70px 15px",md:"45px 30px 70px 30px",lg:"45px 50px 70px 50px"}
+                    }}>
+                <Box sx={{maxWidth:"1540px",margin:"auto",padding:{xs:"20px" ,sm:"40px",md:"50px"}} }>
+                    <Divider/>
+                    <Grid2 container spacing={{xs:2,sm:2,md:3}} columns={{xs:1,sm:2,md:4,lg:6}} sx={{paddingBottom:"20px",paddingTop:"20px"}}>
                         <Grid2 size={2}>
                             <Typography variant="h6" sx={{fontWeight:"bold"}}>LuckyBrick</Typography>
                             <List sx={{textAlign:"left"}}>
@@ -99,15 +106,15 @@ function BaseFooter(){
                             )
                         })}
                         <Grid2 size={2}>
-                            <Typography variant="h6" sx={{fontWeight:"bold"}}>Sign Up for Email</Typography>
+                            <Typography variant="h6" sx={{fontWeight:"bold"}}>{t("common.signUpForEmail")}</Typography>
                             <List>
                                 <ListItem sx={{paddingLeft:0,paddingRight:0}}>
-                                    Sign up to get first dibs on new arrivals, sales, exclusive content, events and more!
+                                    {t("common.signUpEmailText")}
                                 </ListItem>
                                 <ListItem sx={{paddingLeft:0,paddingRight:0}}>
                                     <Card sx={{display:"flex",justifyContent:"center"}}>
-                                        <InputBase sx={{padding:"10px"}} placeholder="Enter you email..." id="subscribe-email"/>
-                                        <Button sx={{margin:"5px"}} variant="contained" endIcon={<Loyalty/>}>Subscribe</Button>
+                                        <InputBase sx={{padding:"10px"}} placeholder={t("form.emailInput")} id="subscribe-email"/>
+                                        <Button sx={{margin:"5px"}} variant="contained" endIcon={<Loyalty/>}>{t("button.subscribe")}</Button>
                                     </Card>
                                 </ListItem>
                             </List>
@@ -117,7 +124,7 @@ function BaseFooter(){
                     <Divider/>
                     <Box sx={{display:"flex",alignItems:"center",paddingTop:"20px", justifyContent:"space-between"}}>
                         <Box sx={{}}>
-                            <Typography>© 2024 Lucky Brick. All Rights Reserved</Typography>
+                            <Typography>{t("common.tradeMark")}</Typography>
                         </Box>
                         <Box>
                             {paymentMethod.map((item)=><img key={item.name} style={{width:"48px",height:"30px"}} alt={item.name} src={item.icon}/>)}

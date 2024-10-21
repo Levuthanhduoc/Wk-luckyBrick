@@ -1,14 +1,15 @@
 import { Box, Skeleton, Toolbar } from "@mui/material";
 import { Suspense } from "react";
 import {Route, Routes } from "react-router-dom";
+import SkeletonExtra from "../extra/seletonEX";
 
 import allPath from "../../_nav";
 function BaseContent (){
     return(
         <>
-            <Box className ="app-content" component="main" sx={{ p: 3 }}>
-                <Toolbar />
-                    <Suspense fallback={<Skeleton variant="rectangular" width={210} height={118} />}>
+            <Box className ="app-content" component="main" >
+                <Box sx={{padding:{xs:"20px" ,sm:"40px",md:"50px"}}}>
+                    <Suspense fallback={<SkeletonExtra/>}>
                         <Routes>
                             {allPath.map((item)=>{
                                 return (
@@ -17,6 +18,7 @@ function BaseContent (){
                             })}
                         </Routes>                
                     </Suspense>                
+                </Box>
             </Box>        
         </>
     )

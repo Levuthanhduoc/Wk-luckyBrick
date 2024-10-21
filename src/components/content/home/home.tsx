@@ -1,11 +1,20 @@
-import { Box } from "@mui/material";
+import { Box, Slide } from "@mui/material";
+import React from "react";
+
+const ShopCard = React.lazy(()=>import('../../extra/shopCard'))
+
+
 
 function Home(){
     return (
         <>
-            <Box>
-                Home
-            </Box>
+            <Slide direction="left" in={true} timeout={500}>
+                <Box>
+                    <Box className="ad-banner">
+                        home
+                    </Box>
+                </Box>
+            </Slide>
         </>
     )
 }

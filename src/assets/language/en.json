@@ -21,9 +21,30 @@
         "signUpForEmail":"Sign Up for Email",
         "signUpEmailText":"Sign up to get first dibs on new arrivals, sales, exclusive content, events and more!",
         "followsUs":"Follow Us",
-        "tradeMark":"© 2024 Lucky Brick. All Rights Reserved"
+        "tradeMark":"© 2024 Lucky Brick. All Rights Reserved",
+        "welcomeBanner":"Welcome",
+        "welcomeSubBanner":"Shop through our latest selection of LEGO",
+        "featuredSort":"Featured",
+        "bestSellSort":"Best selling",
+        "alplabetSortASC":"Alphabetically, A-Z",
+        "alphabetSortDESC":"Alphabetically, Z-A",
+        "priceSortASC":"Price, low to high",
+        "priceSortDESC":"Price, high to low",
+        "dateSortASC":"Date, old to new",
+        "dateSortDESC":"Date, new to old",
+        "filter":"Filter",
+        "search":"Search",
+        "price":"Price",
+        "availability":"Availability",
+        "theme":"Theme"
     },
     "form":{
-        "EmailInput":"Enter you Email"
+        "emailInput":"Enter you Email",
+        "inStock":"In Stoc",
+        "outStock":"Out of Stock",
+        "other":"Other"
+    },
+    "conversion":{
+        "money":"${{value}}"
     }
 }
