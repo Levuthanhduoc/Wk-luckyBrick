@@ -8,6 +8,7 @@ import { BrowserRouter } from 'react-router-dom';
 const BaseHeader = React.lazy(()=>import('./components/base/baseHeader'))
 const BaseFooter = React.lazy(()=>import('./components/base/baseFooter'))
 const BaseContent = React.lazy(()=>import('./components/base/baseContent'))
+const ToTop = React.lazy(()=>import('./components/extra/goToptop'))
 
 function App() {
   const theme = createTheme({
@@ -50,6 +51,7 @@ function App() {
           <BrowserRouter>  
             <BaseHeader/>
             <BaseContent/>
+            <ToTop/>
             <BaseFooter/>
           </BrowserRouter>
         </ThemeProvider>    

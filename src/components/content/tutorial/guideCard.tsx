@@ -5,8 +5,15 @@ import { useState } from "react"
 import { Handyman } from "@mui/icons-material"
 
 import legoICon from "../../../assets/image/icon/lego.svg"
+
+interface items{
+    picture:any,
+    name:string,
+    serial:string|number
+}
 interface props{
     sx?:Object,
+    items:items
 }
 
 function GuideCard(props:props){
@@ -38,10 +45,10 @@ function GuideCard(props:props){
                         <Box sx={{width:"0",height:"0",BorderLeft:"50px solid transparent",borderRight:"100px solid black",borderTop:"70px solid transparent"}}/>
                         <Box sx={{height:"100%",width:"40%",backgroundColor:"black"}}/>
                     </Box>
-                    <Typography sx={{position:"absolute",top:"5%",left:"5%",fontWeight:"bolder"}}>Pices number</Typography>
-                    <Typography sx={{position:"absolute",bottom:"5%",right:"5%",fontWeight:"bolder"}}>Lego set name</Typography>
+                    <Typography sx={{position:"absolute",top:"5%",left:"5%",fontWeight:"bolder"}}>{props.items.serial}</Typography>
+                    <Typography sx={{position:"absolute",bottom:"5%",right:"5%",fontWeight:"bolder"}}>{props.items.name}</Typography>
                     <Box sx={{backgroundColor:"#262626",width:"90%",height:"90%"}}>
-                        <img></img>
+                        <img className={CS.shopCardImage} src={props.items.picture}></img>
                         <Grow in={hover}  timeout={500}>
                             <IconButton sx={{ position:"absolute",top:"45%",left:"45%"}}><Handyman/></IconButton>
                         </Grow>
