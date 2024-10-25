@@ -28,6 +28,7 @@
     bottom: 0;
     left: 0;
     background:linear-gradient(93deg, #FF9C8D 6.39%, #D655A5 51.55%, #6053CB 95.78%);
+    backface-visibility: hidden;
     background-size: 400% 200%; 
     transition: opacity 1s ease-in;
     opacity: 0;

@@ -1,32 +1,53 @@
-import { Box, Typography } from "@mui/material"
-
-import CS from '../../../assets/css/component.module.css'
+import { Box, Grow, IconButton, SxProps, Typography } from "@mui/material"
+import RgbWaper from "../../extra/rgbWarper"
+import { SportsEsports } from "@mui/icons-material"
 import { useState } from "react"
 
+import CS from '../../../assets/css/component.module.css'
+
 interface props{
-    sx?:Object,
+    sx?:SxProps,
+    picture:any,
+    name:string,
 }
 function GameCard (props:props){
     const [hover,setHover] = useState(false)
-
     return(
         <>
-             <Box sx={{...props.sx,position:"relative",display:"grid",placeItems:"center"}} 
-                onMouseOver={()=>{setHover(true)}} 
-                onMouseOut={()=>{setHover(false)}}>
-                <Box className = {`${CS.borderGaming} ${hover&&CS.borderGamingHover}`} sx={{borderRadius:"5px"}}/>
-                <Box sx={{position:"relative"}}>
-                    <Box>
+            <RgbWaper sx={props.sx}>
+                <Box sx={{flex:1,display:"flex",flexDirection:"column",position:"relative",margin:"1px",backgroundColor:"black",borderRadius:"5px"}}
+                    onMouseOver={()=>{setHover(true)}} 
+                    onMouseOut={()=>{setHover(false)}}
+                >
+                    <Grow in={hover}>
+                        <Box sx={{position:"absolute",height:"100%",width:"100%",display:"grid",placeItems:"center",zIndex:2}}>
+                            <IconButton>
+                                <SportsEsports/>
+                            </IconButton>
+                        </Box>
+                    </Grow>
+                    <Box sx={{height:"20%",display:"grid",placeItems:"center"}}>
                         <Typography>
-                            game title
+                            {props.name}
                         </Typography>
                     </Box>
-                    <Box>
-                        <img></img>
+                    <Box sx={{flex:1,margin:"0 1% 5% 1%",position:"relative",backgroundColor:"#262626"}}>
+                        <img  className={CS.shopCardImage} src={props.picture}></img>  
                     </Box>
-                    <Box className = {"moreInfo"} sx={{position:"absolute"}}></Box>
+                    <Box className = {"moreInfo"} sx={{
+                        position:"absolute",
+                        backgroundColor:"inherit",
+                        height:{xs:`${hover?"100%":"0"}`,sm:"100%"},width:{xs:"100%",sm:`${hover?"100%":"0"}`},
+                        top:{xs:"100%",sm:"0"},left:{sx:"0",sm:"100%"},
+                        bottom:{sm:"0",xs:"none"},
+                        transition: "width 1s ease-in-out,height 1s ease-in-out,opacity 1s ease-in-out",
+                        overflow:"hidden",
+                        zIndex:2,
+                        borderRadius:"5px",
+                        opacity:`${hover?1:0}`
+                    }} >game info</Box>
                 </Box>
-            </Box>
+            </RgbWaper>
         </>
     )
 }
