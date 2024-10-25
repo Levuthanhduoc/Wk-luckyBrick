@@ -1,10 +1,10 @@
-import { FormControl, InputBase, TextField } from "@mui/material"
+import {InputBase, SxProps} from "@mui/material"
 import React, { useState } from "react"
 import { useTranslation } from "react-i18next"
 
 interface props{
-    onSearch:any,
-    sx?:Object,
+    onSearch:(text:string)=>void,
+    sx?:SxProps,
 }
 
 const SearchBar= React.forwardRef((props:props,ref)=>{

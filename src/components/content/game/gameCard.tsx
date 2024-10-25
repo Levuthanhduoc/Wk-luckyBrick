@@ -37,15 +37,17 @@ function GameCard (props:props){
                     <Box className = {"moreInfo"} sx={{
                         position:"absolute",
                         backgroundColor:"inherit",
-                        height:{xs:`${hover?"100%":"0"}`,sm:"100%"},width:{xs:"100%",sm:`${hover?"100%":"0"}`},
-                        top:{xs:"100%",sm:"0"},left:{sx:"0",sm:"100%"},
-                        bottom:{sm:"0",xs:"none"},
-                        transition: "width 1s ease-in-out,height 1s ease-in-out,opacity 1s ease-in-out",
+                        height:`${hover?"100%":"0"}`,width:"100%",
+                        top:"100%",left:"0",
+                        transition: "width 0.5s ease-in-out,height 0.5s ease-in-out,opacity 0.5s ease-in-out",
                         overflow:"hidden",
-                        zIndex:2,
+                        zIndex:1,
                         borderRadius:"5px",
                         opacity:`${hover?1:0}`
-                    }} >game info</Box>
+                    }} >
+                        <Box sx={{backgroundColor:"#262626",display:"grid",placeItems:"center"}}>GameInfo</Box>
+                        <Box sx={{fontSize:"0.8em"}}>Some info</Box>
+                    </Box>
                 </Box>
             </RgbWaper>
         </>

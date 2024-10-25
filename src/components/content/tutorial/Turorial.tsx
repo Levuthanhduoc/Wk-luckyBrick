@@ -6,6 +6,11 @@ import CutBar from "../../extra/cutBar";
 import placeHolder2 from '../../../assets/image/placeholder/placeholder2.png'
 import { useState } from "react";
 import { LocalFireDepartment, NewReleases, Shuffle, TipsAndUpdates } from "@mui/icons-material";
+interface defaultData{
+    name:string,
+    serial:string,
+    picture:string
+}
 
 function Tutorial(){
     const testData = [
@@ -39,7 +44,7 @@ function Tutorial(){
         {name:"Featured",icon:<TipsAndUpdates/>,onClick:()=>{}},
         {name:"random",icon:<Shuffle/>,onClick:()=>{}}
     ]
-    const onSearch = (defaultData:any[],query:string,section:string)=>{
+    const onSearch = (defaultData:defaultData[],query:string,section:string)=>{
         const filtered = defaultData.filter((item)=>item[section as "name"].toLowerCase().includes(query.toLowerCase()))
         setPage(1)
         if(query == ""){
