@@ -90,7 +90,7 @@ function WebGame(){
         return()=>{
             document.removeEventListener("scroll",onScroll)
         }
-    })
+    },[])
     return (
         <>
             <Box sx={{position:"relative"}}>

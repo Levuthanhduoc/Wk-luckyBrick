@@ -35,8 +35,14 @@
     z-index: -1;
 }
 
-.gameBar{
+.grabbing{
+    cursor: grabbing;
+}
 
+.breadCrumb{
+    color: 'inherit';
+    text-decoration: 'none';
+    cursor: 'pointer'
 }
 
 .borderGamingHover{

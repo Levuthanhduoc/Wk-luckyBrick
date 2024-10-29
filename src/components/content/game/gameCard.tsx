@@ -7,7 +7,7 @@ import CS from '../../../assets/css/component.module.css'
 
 interface props{
     sx?:SxProps,
-    picture:any,
+    picture:string,
     name:string,
 }
 function GameCard (props:props){

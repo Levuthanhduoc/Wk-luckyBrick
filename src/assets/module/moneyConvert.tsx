@@ -1,4 +1,4 @@
-export default function (value:number,contry:string):string|number{
+export default function moneyConvert (value:number,contry:string):string|number{
     let result:number|string
     switch(contry){
         case "vn":

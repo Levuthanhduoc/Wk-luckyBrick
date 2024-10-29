@@ -1,4 +1,4 @@
-import { Box, Grow, IconButton, Stack, Typography } from "@mui/material"
+import { Box, Grow, IconButton, Stack, SxProps, Typography } from "@mui/material"
 
 import CS from '../../../assets/css/component.module.css'
 import { useState } from "react"
@@ -7,12 +7,12 @@ import { Handyman } from "@mui/icons-material"
 import legoICon from "../../../assets/image/icon/lego.svg"
 
 interface items{
-    picture:any,
+    picture:string,
     name:string,
     serial:string|number
 }
 interface props{
-    sx?:Object,
+    sx?:SxProps,
     items:items
 }
 

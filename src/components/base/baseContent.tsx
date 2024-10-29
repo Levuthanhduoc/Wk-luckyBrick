@@ -1,4 +1,4 @@
-import { Box, Skeleton, Toolbar } from "@mui/material";
+import { Box} from "@mui/material";
 import { Suspense } from "react";
 import {Route, Routes } from "react-router-dom";
 import SkeletonExtra from "../extra/seletonEX";

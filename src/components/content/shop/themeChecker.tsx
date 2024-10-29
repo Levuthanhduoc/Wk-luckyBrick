@@ -1,4 +1,5 @@
-import { Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel } from "@mui/material"
+import { Checkbox, FormControl, FormControlLabel, FormGroup} from "@mui/material"
+import { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next"
 
 interface checkProps {
@@ -7,7 +8,7 @@ interface checkProps {
         name:string,
         checked:boolean
     }>,
-    setItems:Function,
+    setItems:Dispatch<SetStateAction<{ label: string; name: string; checked: boolean; }[]>>,
 }
 
 export function ThemeChecker(props:checkProps){

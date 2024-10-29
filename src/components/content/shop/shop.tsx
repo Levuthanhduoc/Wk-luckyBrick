@@ -41,7 +41,7 @@ function Shop(){
         id:number|string,
         name:string,
         price:number,
-        picture:any,
+        picture:string,
         sale?:number,
         time?:string,
     }

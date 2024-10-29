@@ -53,6 +53,7 @@ function ShopBox(props:componentProps){
         return ()=>{
             clearInterval(timerSale)
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
 
     return (
