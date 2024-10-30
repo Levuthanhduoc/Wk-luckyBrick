@@ -1,5 +1,4 @@
 import { Box, Slide } from "@mui/material";
-import React from "react";
 
 function Home(){
     return (
@@ -9,7 +8,7 @@ function Home(){
                     <Box className="ad-banner">
                         home
                     </Box>
-                    <iframe style={{width:"1000px",height:"1000px"}} src={"../../../assets/game/bird/index.html"} title="Embedded HTML"></iframe>
+                
                 </Box>
             </Slide>
         </>

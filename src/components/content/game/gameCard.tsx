@@ -4,14 +4,17 @@ import { SportsEsports } from "@mui/icons-material"
 import { useState } from "react"
 
 import CS from '../../../assets/css/component.module.css'
+import { useNavigate } from "react-router-dom"
 
 interface props{
     sx?:SxProps,
     picture:string,
     name:string,
+    id:string,
 }
 function GameCard (props:props){
     const [hover,setHover] = useState(false)
+    const navigation = useNavigate()
     return(
         <>
             <RgbWaper sx={props.sx}>
@@ -21,9 +24,9 @@ function GameCard (props:props){
                 >
                     <Grow in={hover}>
                         <Box sx={{position:"absolute",height:"100%",width:"100%",display:"grid",placeItems:"center",zIndex:2}}>
-                            <IconButton>
+                            {props.id&&<IconButton onClick={()=>navigation(`${props.id}`)}>
                                 <SportsEsports/>
-                            </IconButton>
+                            </IconButton>}
                         </Box>
                     </Grow>
                     <Box sx={{height:"20%",display:"grid",placeItems:"center"}}>

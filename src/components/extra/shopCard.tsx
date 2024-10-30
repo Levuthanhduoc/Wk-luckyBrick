@@ -5,8 +5,10 @@ import CS from '../../assets/css/component.module.css'
 import { FavoriteBorderOutlined, RemoveRedEyeOutlined, ShoppingBagOutlined} from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import moneyConvert from "../../assets/module/moneyConvert";
+import { useNavigate } from "react-router-dom";
 
 type componentProps = {
+    id:string,
     name:string,
     price:number,
     picture:string,
@@ -19,6 +21,7 @@ function ShopBox(props:componentProps){
     const [hover,setHover] = useState(false)
     const [hoverImage,setHoverImage] = useState(false)
     const [countDown,setCountDown] = useState<string|number|undefined>("start")
+    const navigation = useNavigate()
 
     const buttonCard = [
         {name:"add to cart",icon:<ShoppingBagOutlined/>,time:600},
@@ -70,7 +73,7 @@ function ShopBox(props:componentProps){
                         <span className={CS.dot}/>
                     </Box>
                     <Box sx={{display:"flex",justifyContent:"center",backgroundColor:"#262626",borderRadius:"5px",position:"relative"}}>
-                        <img onClick={()=>{console.log("aaaaaaaaaa")}} className={CS.shopCardImage} src={props.picture}/>
+                        <img onClick={()=>{navigation(props.id)}} className={CS.shopCardImage} src={props.picture}/>
                         <Box sx={{
                             position:"absolute",
                             overflow:"hidden",

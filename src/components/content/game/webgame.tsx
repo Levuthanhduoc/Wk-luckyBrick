@@ -10,28 +10,33 @@ import SearchBar from "../../extra/searchBar";
 import farm from '../../../assets/image/placeholder/Normal_HeartlakeFarm.jpg'
 import race from '../../../assets/image/placeholder/Racetrack_splash.png'
 import space from '../../../assets/image/placeholder/planet-hopper.png'
+import fetchData from "../../../assets/module/fecthData";
 
+const gameApiUrl = import.meta.env.VITE_GAME_API
+const apiUrl = import.meta.env.VITE_API_URL
+console.log(apiUrl)
 interface defaultData{
     name:string,
-    picture:string
+    picture:string,
+    id:number
 }
 
 
 function WebGame(){
-    const data = [{
-        name:"testGame1",picture:placeHolder3},
-        {name:"testGame2",picture:placeHolder3},
-        {name:"testGame3",picture:placeHolder3},
-        {name:"testGame4",picture:placeHolder3},
-        {name:"testGame5",picture:placeHolder3},
-        {name:"testGame6",picture:placeHolder3},
-        {name:"testGame7",picture:placeHolder3},
-        {name:"testGame8",picture:placeHolder3},
-        {name:"testGame9",picture:placeHolder3},
-        {name:"testGame10",picture:placeHolder3},
-        {name:"testGame11",picture:placeHolder3},
-        {name:"testGame12",picture:placeHolder3},
-        {name:"testGame13",picture:placeHolder3},
+    const data = [
+        {id:0,name:"testGame1",picture:placeHolder3},
+        {id:1,name:"testGame2",picture:placeHolder3},
+        {id:2,name:"testGame3",picture:placeHolder3},
+        {id:3,name:"testGame4",picture:placeHolder3},
+        {id:4,name:"testGame5",picture:placeHolder3},
+        {id:5,name:"testGame6",picture:placeHolder3},
+        {id:6,name:"testGame7",picture:placeHolder3},
+        {id:7,name:"testGame8",picture:placeHolder3},
+        {id:8,name:"testGame9",picture:placeHolder3},
+        {id:9,name:"testGame10",picture:placeHolder3},
+        {id:10,name:"testGame11",picture:placeHolder3},
+        {id:11,name:"testGame12",picture:placeHolder3},
+        {id:12,name:"testGame13",picture:placeHolder3},
     ]
     const trendingData = [
         {name:"farm",picture:farm},
@@ -51,7 +56,14 @@ function WebGame(){
         padding:{sm:"45px 15px 70px 15px",md:"45px 30px 70px 30px",lg:"45px 50px 70px 50px"}, 
     }
 
-    
+    const getData = async ()=>{ 
+        if(apiUrl){
+            const result = await fetchData({url:gameApiUrl,methoud:"get"})
+            if(result){
+                setItemData(result as defaultData[])
+            }
+        }
+    }
 
     const gamebarItems = [
         {id:"popular",name:"Popular",},
@@ -87,6 +99,7 @@ function WebGame(){
 
     useEffect(()=>{
         document.addEventListener("scroll",onScroll)
+        getData()
         return()=>{
             document.removeEventListener("scroll",onScroll)
         }
@@ -190,7 +203,7 @@ function WebGame(){
                         {itemData.map((item,index)=>{
                             if(index >= (page-1)*12&&index<page*12){
                                 return<Grid2 key={item.name} size={1}>
-                                        <GameCard sx={{minWidth:"200px",maxWidth:"500px",height:"auto"}} name={item.name} picture={item.picture}/>
+                                        <GameCard sx={{minWidth:"200px",maxWidth:"500px",height:"auto"}} id={`${item.id }`} name={item.name} picture={apiUrl + item.picture}/>
                                     </Grid2>
                                 }
                             }

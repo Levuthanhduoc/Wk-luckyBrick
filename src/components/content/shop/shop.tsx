@@ -8,8 +8,52 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Moneyslider } from "./moneySlider";
 import { ThemeChecker } from "./themeChecker";
+import fetchData from "../../../assets/module/fecthData";
 
+const shopApiUrl = import.meta.env.VITE_SHOP_API
+const apiUrl = import.meta.env.VITE_API_URL
+interface itemData {
+    id:number|string,
+    name:string,
+    price:number,
+    image:string,
+    sale?:number,
+    time?:string,
+}
 function Shop(){
+    const test:itemData[]  = [
+        {id: "001", name: "Lego Supercar",image:placeHolder, price: 100, sale: 25, time: "10/25/2024"},
+        {id: "002", name: "Lego Castle Siege",image:placeHolder, price: 150, sale: 50, time: "11/10/2024"},
+        {id: "003", name: "Lego Space Shuttle",image:placeHolder, price: 200, sale: 35, time: "10/30/2024"},
+        {id: "004", name: "Lego Pirate Ship",image:placeHolder, price: 250, sale: 75, time: "11/5/2024"},
+        {id: "005", name: "Lego Dinosaur Attack",image:placeHolder, price: 90, sale: 60, time: "10/28/2024"},
+        {id: "006", name: "Lego Robot Warrior",image:placeHolder, price: 80, sale: 15, time: "11/15/2024"},
+        {id: "007", name: "Lego City Train",image:placeHolder, price: 130, sale: 20, time: "10/27/2024"},
+        {id: "008", name: "Lego Jungle Adventure",image:placeHolder, price: 110, sale: 40, time: "11/8/2024"},
+        {id: "009", name: "Lego Arctic Expedition",image:placeHolder, price: 140, sale: 30, time: "10/26/2024"},
+        {id: "010", name: "Lego Fire Station",image:placeHolder, price: 75, sale: 85, time: "11/12/2024"},
+        {id: "011", name: "Lego Space Colony",image:placeHolder, price: 180, sale: 70, time: "11/7/2024"},
+        {id: "012", name: "Lego Wild West Fort",image:placeHolder, price: 125, sale: 45, time: "10/24/2024"},
+        {id: "013", name: "Lego Police Chase",image:placeHolder, price: 95, sale: 55, time: "11/1/2024"},
+        {id: "014", name: "Lego Mars Mission",image:placeHolder, price: 160, sale: 65, time: "11/2/2024"},
+        {id: "015", name: "Lego Dragon's Lair",image:placeHolder, price: 170, sale: 20, time: "10/22/2024"},
+        {id: "016", name: "Lego Submarine",image:placeHolder, price: 120, sale: 90, time: "11/4/2024"},
+        {id: "017", name: "Lego Safari Jeep",image:placeHolder, price: 85, sale: 25, time: "11/3/2024"},
+        {id: "018", name: "Lego Underwater Base",image:placeHolder, price: 145, sale: 50, time: "10/21/2024"},
+        {id: "019", name: "Lego Space Battle",image:placeHolder, price: 190, sale: 40, time: "10/29/2024"},
+        {id: "020", name: "Lego Medieval Town",image:placeHolder, price: 105, sale: 60, time: "11/11/2024"},
+        {id: "021", name: "Lego Futuristic Racer",image:placeHolder, price: 115, sale: 35, time: "10/31/2024"},
+        {id: "022", name: "Lego Pirate Cove",image:placeHolder, price: 135, sale: 80, time: "10/23/2024"},
+        {id: "023", name: "Lego Sky Lab",image:placeHolder, price: 200, sale: 15, time: "11/9/2024"},
+        {id: "024", name: "Lego Desert Raiders",image:placeHolder, price: 90, sale: 55, time: "10/20/2024"},
+        {id: "025", name: "Lego Aquatic World",image:placeHolder, price: 160, sale: 45, time: "11/14/2024"},
+        {id: "026", name: "Lego Cyber Fortress",image:placeHolder, price: 140, sale: 65, time: "10/19/2024"},
+        {id: "027", name: "Lego Robo Armory",image:placeHolder, price: 175, sale: 10, time: "11/13/2024"},
+        {id: "028", name: "Lego Steampunk City",image:placeHolder, price: 150, sale: 75, time: "11/6/2024"},
+        {id: "029", name: "Lego Mountain Expedition",image:placeHolder, price: 110, sale: 85, time: "10/18/2024"},
+        {id: "030", name: "Lego Volcano Escape",image:placeHolder, price: 100, sale: 20, time: "11/5/2024"}
+    ]
+
     const {t} = useTranslation()
 
     const availabilityOption = [
@@ -31,55 +75,13 @@ function Shop(){
     const [priceRange,setPriceRange] = useState<number|number[]>([25,300])
     const [avalible,setAvalible] = useState(availabilityOption)
     const [theme,setTheme] = useState(themeOption)
+    const [itemData,setItemData] =useState<itemData[]>(test)
+    
     
     const centerCss = {
         maxWidth:"1540px",width:"100%",margin:"auto",
         padding:{sm:"45px 15px 70px 15px",md:"45px 30px 70px 30px",lg:"45px 50px 70px 50px"}, 
     }
-
-    interface itemData {
-        id:number|string,
-        name:string,
-        price:number,
-        picture:string,
-        sale?:number,
-        time?:string,
-    }
-    const test:itemData[]  = [
-    {id: "001", name: "Lego Supercar",picture:placeHolder, price: 100, sale: 25, time: "10/25/2024"},
-    {id: "002", name: "Lego Castle Siege",picture:placeHolder, price: 150, sale: 50, time: "11/10/2024"},
-    {id: "003", name: "Lego Space Shuttle",picture:placeHolder, price: 200, sale: 35, time: "10/30/2024"},
-    {id: "004", name: "Lego Pirate Ship",picture:placeHolder, price: 250, sale: 75, time: "11/5/2024"},
-    {id: "005", name: "Lego Dinosaur Attack",picture:placeHolder, price: 90, sale: 60, time: "10/28/2024"},
-    {id: "006", name: "Lego Robot Warrior",picture:placeHolder, price: 80, sale: 15, time: "11/15/2024"},
-    {id: "007", name: "Lego City Train",picture:placeHolder, price: 130, sale: 20, time: "10/27/2024"},
-    {id: "008", name: "Lego Jungle Adventure",picture:placeHolder, price: 110, sale: 40, time: "11/8/2024"},
-    {id: "009", name: "Lego Arctic Expedition",picture:placeHolder, price: 140, sale: 30, time: "10/26/2024"},
-    {id: "010", name: "Lego Fire Station",picture:placeHolder, price: 75, sale: 85, time: "11/12/2024"},
-    {id: "011", name: "Lego Space Colony",picture:placeHolder, price: 180, sale: 70, time: "11/7/2024"},
-    {id: "012", name: "Lego Wild West Fort",picture:placeHolder, price: 125, sale: 45, time: "10/24/2024"},
-    {id: "013", name: "Lego Police Chase",picture:placeHolder, price: 95, sale: 55, time: "11/1/2024"},
-    {id: "014", name: "Lego Mars Mission",picture:placeHolder, price: 160, sale: 65, time: "11/2/2024"},
-    {id: "015", name: "Lego Dragon's Lair",picture:placeHolder, price: 170, sale: 20, time: "10/22/2024"},
-    {id: "016", name: "Lego Submarine",picture:placeHolder, price: 120, sale: 90, time: "11/4/2024"},
-    {id: "017", name: "Lego Safari Jeep",picture:placeHolder, price: 85, sale: 25, time: "11/3/2024"},
-    {id: "018", name: "Lego Underwater Base",picture:placeHolder, price: 145, sale: 50, time: "10/21/2024"},
-    {id: "019", name: "Lego Space Battle",picture:placeHolder, price: 190, sale: 40, time: "10/29/2024"},
-    {id: "020", name: "Lego Medieval Town",picture:placeHolder, price: 105, sale: 60, time: "11/11/2024"},
-    {id: "021", name: "Lego Futuristic Racer",picture:placeHolder, price: 115, sale: 35, time: "10/31/2024"},
-    {id: "022", name: "Lego Pirate Cove",picture:placeHolder, price: 135, sale: 80, time: "10/23/2024"},
-    {id: "023", name: "Lego Sky Lab",picture:placeHolder, price: 200, sale: 15, time: "11/9/2024"},
-    {id: "024", name: "Lego Desert Raiders",picture:placeHolder, price: 90, sale: 55, time: "10/20/2024"},
-    {id: "025", name: "Lego Aquatic World",picture:placeHolder, price: 160, sale: 45, time: "11/14/2024"},
-    {id: "026", name: "Lego Cyber Fortress",picture:placeHolder, price: 140, sale: 65, time: "10/19/2024"},
-    {id: "027", name: "Lego Robo Armory",picture:placeHolder, price: 175, sale: 10, time: "11/13/2024"},
-    {id: "028", name: "Lego Steampunk City",picture:placeHolder, price: 150, sale: 75, time: "11/6/2024"},
-    {id: "029", name: "Lego Mountain Expedition",picture:placeHolder, price: 110, sale: 85, time: "10/18/2024"},
-    {id: "030", name: "Lego Volcano Escape",picture:placeHolder, price: 100, sale: 20, time: "11/5/2024"}
-    ]
-
-    
-
     const sortOption = [
         {name:"common.featuredSort",value:"featured"},
         {name:"common.bestSellSort",value:"best"},
@@ -98,16 +100,13 @@ function Shop(){
         {name:"common.price",format:<Moneyslider priceRange={priceRange as number[]} setPriceRange={setPriceRange} min={25} max={300} />},
         {name:"common.theme",format:<ThemeChecker items={theme} setItems={setTheme}/>},
     ]
-
-    const [data,setData] = useState(test)
-
     const onSearch = (data:itemData[],query:string,section:string)=>{
         const filtered = data.filter((item)=>item[section as "name"].toLowerCase().includes(query.toLowerCase()))
         setPage(1)
         if(query == ""){
-            setData(data)
+            setItemData(data)
         }else{
-            setData(filtered)
+            setItemData(filtered)
         }
     }
 
@@ -118,9 +117,19 @@ function Shop(){
         }else {
             setFilterPos(false)
         }
-    } 
+    }
+    
+    const getData = async ()=>{ 
+        if(apiUrl){
+            const result = await fetchData({url:shopApiUrl,methoud:"get"})
+            if(result){
+                setItemData(result as itemData[])
+            }
+        }
+    }
 
     useEffect(()=>{
+        getData()
         window.addEventListener("scroll",onScoll)
         return ()=>{
             window.removeEventListener("scroll",onScoll)
@@ -215,7 +224,7 @@ function Shop(){
                                             sx={{width:{xs:"100px",sm:"20vw"}}}
                                             onChange={(e)=>{
                                                 setSearchQuery(e.target.value)
-                                                onSearch(test,e.target.value,"name")
+                                                onSearch(itemData,e.target.value,"name")
                                             }}
                                             value={searchQuery}
                                             id="searchBar"
@@ -235,17 +244,17 @@ function Shop(){
                             </Box>
                         </Box>
                         <Grid2 container spacing={2} columns={{sm:2,md:2,lg:3,xl:4}}>
-                            {data.map((item,index)=>{
+                            {itemData&&itemData.map((item,index)=>{
                                     if(index >= (page-1)*12&&index<page*12){
                                         return<Grid2 key={item.name} size={1}>
-                                            <ShopBox sx={{minWidth:"200px",maxWidth:"500px"}}  name={item.name} price={item.price} picture={item.picture} sale={item.sale} timer={item.time}/>
+                                            <ShopBox sx={{minWidth:"200px",maxWidth:"500px"}} id={`${item.id}`}  name={item.name} price={item.price} picture={apiUrl+item.image[0]} sale={item.sale||1 * 100} timer={item.time}/>
                                         </Grid2>
                                     }
                                 }
                             )}
                         </Grid2>
                         <Box sx={{display:"flex",justifyContent:"center"}}>
-                            <Pagination count={Math.ceil(data.length/12)} page={page} onChange={(_e,value)=>setPage(value)} shape="rounded" />
+                            <Pagination count={Math.ceil(itemData.length/12)} page={page} onChange={(_e,value)=>setPage(value)} shape="rounded" />
                         </Box>
                     </Box>
                 </Box>

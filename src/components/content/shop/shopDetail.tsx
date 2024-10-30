@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Fade, IconButton, Slide, Stack, SxProps, Tab, Tabs, Typography } from "@mui/material"
+import { Box, Button, Divider, Fade, FormControl, IconButton, MenuItem, Rating, Select, Stack, SxProps, Tab, Tabs, TextField, Typography } from "@mui/material"
 import Breakcrumb from "../../extra/breadcrumb"
 import { SyntheticEvent, useEffect, useState } from "react"
 
@@ -6,31 +6,48 @@ import testpic from '../../../assets/image/placeholder/placeholder1.webp'
 import PictureShowCase from "../../extra/pictureShowCase"
 import CountDown from "../../extra/countDownTimer"
 import CS from "../../../assets/css/component.module.css"
-import { Add, AddShoppingCart, ArrowForwardIosOutlined, ArticleOutlined, FavoriteBorder, GppGoodOutlined,LocalShippingOutlined, Remove } from "@mui/icons-material"
+import { Add, AddShoppingCart, ArrowForwardIosOutlined, ArticleOutlined, FavoriteBorder, GppGoodOutlined,LocalShippingOutlined, Remove, Send } from "@mui/icons-material"
 
 import paypalIcon from '../../../assets/image/icon/paypal.png';
 import masterCardIcon from '../../../assets/image/icon/Mastercard.png';
 import visaIcon from '../../../assets/image/icon/visa.png';
 import momoIcon from '../../../assets/image/icon/momo.png';
 import zalopayIcon from '../../../assets/image/icon/zalo.png';
-interface breadcrumbItem{
-    name:string,
-    path:string,
-}
+import ProcessBar from "../../extra/processBar"
+import { useParams } from "react-router-dom"
+import fetchData from "../../../assets/module/fecthData"
+
 interface TabContentProps {
     children?: React.ReactNode,
     index: number,
     value: number,
     sx?:SxProps,
-  }
+}
 
-
+interface itemsData  {
+    id:number,
+    name:string,
+    image: string[] ,
+    price:number,
+    sale:number,
+    description:string,
+    info:{
+        age:string,
+        pieces:string,
+        serial:string,
+        category:string
+    }
+}
+const shopApiUrl = import.meta.env.VITE_SHOP_API
+const apiUrl = import.meta.env.VITE_API_URL
 const centerCss = {
     maxWidth:"1540px",width:"100%",margin:"auto",
-    padding:{sm:"45px 15px 70px 15px",md:"45px 30px 70px 30px",lg:"45px 50px 70px 50px"}, 
+    padding:{xs:"25px 0 0 0",sm:"45px 15px 70px 15px",md:"45px 30px 70px 30px",lg:"45px 50px 70px 50px"}, 
 }
 
 const TabContent = (props:TabContentProps)=>{
+    
+
     return(
         <Fade in={props.value == props.index} mountOnEnter unmountOnExit timeout={2000}>
             <Box role="tabpanel"
@@ -46,7 +63,7 @@ const TabContent = (props:TabContentProps)=>{
 
 function ShopDetail(){
 
-    const itemData = {
+    const items = {
         id:161845156,
         name:"Lego Dungeon and Dungeon",
         image: [testpic,testpic,testpic,testpic,testpic,testpic,testpic,testpic,testpic,testpic,testpic,testpic,testpic,testpic],
@@ -60,9 +77,13 @@ function ShopDetail(){
             category:"minifigure"
         }
     }
+    const {id} = useParams()
     const [tab,settab] = useState(0)
     const [quantity,setQuantity] = useState(0)
-    const [breadCrumb,setbreadCrumb] = useState<null|breadcrumbItem[]>(null)
+    const [reviewScore,setReviewScore] = useState(0)
+    const [selectSort,setSort] = useState<string>("relevant")
+    const [isReviewOn,setReviewOn] = useState(false)
+    const [itemData,setItemData] = useState(items)
 
     const paymentMethod = [
         {name:"master card",icon:masterCardIcon},
@@ -78,42 +99,51 @@ function ShopDetail(){
         {id:"tab-2",name:"Review"},
     ]
 
-    const setNewbreadCrumb = ()=>{
-        const current = window.location.pathname
-        let newBreadcrumb:breadcrumbItem[]=[]
-        if(current){
-            const allpath = current.split("/")
-            if(allpath.length >1){
-                let merge ="" 
-                for(const path of allpath){
-                    merge = merge + path + "/"
-                    if(path != ""){
-                        newBreadcrumb.push({
-                            name:path,
-                            path:merge
-                        })
-                    }
-                }
-            }else{
-                newBreadcrumb = [{
-                    name:"",
-                    path:""
-                }]
-            }
-            setbreadCrumb(newBreadcrumb)
-        }
+    const reviewSortOption = [
+        {name:"Helpfulness",value:"helpfull"},
+        {name:"Most relevant",value:"relevant"},
+        {name:"Rating - Low to High",value:"ratingASC"},
+        {name:"Rating: High to Low",value:"ratingDES"},
+        {name:"Date - oldest first",value:"dateASC"},
+        {name:"Date - newest first",value:"dateDES"},
+    ]
+
+    const reviewData = {
+        total:152,
+        detail:[7,2,7,11,125]
     }
 
+    const calculateAverageScore=(total:number,items:number[],option?:{reverse:boolean})=>{
+        let allItem = [...items]
+        if(option){
+            if(option.reverse){
+                allItem = allItem.map((_item,index)=>allItem[Math.abs(index-(allItem.length - 1))])
+            }
+        }
+        const calulating = allItem.reduce((total,current,index)=>total+(current * (index + 1)),0)/total
+        return Math.floor(calulating*10)/10
+    }
+    const getData = async ()=>{ 
+        if(apiUrl){
+            const result = await fetchData({url:shopApiUrl + id,methoud:"get"})
+            if(result){
+                setItemData(result as itemsData)
+            }
+        }
+    }
     useEffect(()=>{
-        setNewbreadCrumb()
+        getData()
     },[])
+    useEffect(()=>{
+        setReviewScore(calculateAverageScore(reviewData.total,reviewData.detail,{reverse:false}))
+    },[itemData])
     return(
         <>
             <Box sx={centerCss}>
-                {breadCrumb&&<Breakcrumb sx={{width:"100%",margin:"auto",padding:"30px 0 30px 0"}} items={breadCrumb}/>}
+                {<Breakcrumb sx={{width:"100%",margin:"auto",padding:"30px 0 30px 0"}}/>}
                 <Box sx={{display:"flex",flexDirection:{xs:"column",sm:"column",md:"row"},gap:"15px",width:"100%"}}>
                     <Box sx={{flex:1}}>
-                        <PictureShowCase sx={{width:"100%",maxHeight:"500px",gap:"5px"}} pictures={itemData.image}/>
+                        <PictureShowCase sx={{width:"100%",maxHeight:"500px",gap:"5px"}} pictures={itemData.image.map((img)=>apiUrl + img)}/>
                     </Box>
                     <Box sx={{flex:1,display:"flex",flexDirection:"column", gap:"10px",padding:"0 15px 0 15px"}}>
                         <Typography sx={{fontSize: {md:"26px",lg:"28px"},lineHeight: {md:"31.2px",lg:"33.6px"}}}>{itemData.name}</Typography>
@@ -124,11 +154,11 @@ function ShopDetail(){
                         </Box>
                         <Box sx={{
                             display: "inline-block",
-                            padding: "16px 30px",
+                            padding: {xs:"8px 15px",sm:"16px 30px"},
                             border: "1px solid #B22222",
                             borderRadius: "2.5px",
                             textAlign: "center",
-                            minWidth: "300px"}}>
+                            minWidth: {xs:"100px",sm:"300px"}}}>
                             <Typography>HURRY UP! SALE ENDS IN:</Typography>
                             <CountDown timer={"10/29/2024"}/>
                         </Box>
@@ -142,7 +172,7 @@ function ShopDetail(){
                         </Box>
                         <Box>
                             <Button sx={{backgroundColor:"black" ,color:"white"}}>
-                                <Typography sx={{paddingRight:"15px"}}>Add to cart</Typography>
+                                <Typography sx={{padding:"8px 8px 4px 8px"}}>Add to cart</Typography>
                                 <AddShoppingCart/>
                             </Button>
                             <IconButton>
@@ -179,14 +209,58 @@ function ShopDetail(){
                     </Tabs>
                     <Divider orientation="horizontal" flexItem />
                     <Box sx={{padding:"35px 0 35px 0"}}>
+                        {/* description tab */}
                         <TabContent value={tab} index={0}>
                             {itemData.description}
                         </TabContent>
+                        {/* Additional Information tab */}
                         <TabContent value={tab} index={1}>
                             {itemData.info.age}
                         </TabContent>
+                        {/* review tab */}
                         <TabContent value={tab} index={2}>
-                            {itemData.info.category}
+                            <Stack direction={{xs:"column",md:"row"}} padding={"0 0 40px 0"}>
+                                <Stack padding={{xs:"0 0 40px 0",md:"0"}}>
+                                    <Typography>
+                                        Overall Rating
+                                    </Typography>
+                                    <Stack direction={"row"} alignItems={"center"}>
+                                        <Rating name="size-large" defaultValue={Math.floor(reviewScore)} size="large" readOnly/>
+                                        <Typography sx={{padding:"8px 8px 2px 8px"}}>
+                                            {reviewScore} ({reviewData.total} Reviews)</Typography>
+                                    </Stack>
+                                </Stack>
+                                <Divider orientation={"vertical"} flexItem />
+                                <Divider orientation={"horizontal"} flexItem />
+                                <Stack flexGrow={1} padding={{xs:"40px 0 0 0",md:"0 0 0 40px"}}>
+                                    {reviewData.detail.map((_review,index)=>{
+                                        const newIndex = Math.abs(index - 4)
+                                        const percent = (reviewData.detail[newIndex]/reviewData.total)*100 
+                                        return<Stack key={index} direction={"row"} justifyItems={"center"} alignItems={"center"}>
+                                            <Typography sx={{flexShrink:0}}>{newIndex + 1} star</Typography>
+                                            <ProcessBar sx={{width:{xs:"100px",sm:"300px",md:"25vw"}}} fill={percent} />
+                                            <Typography sx={{flexShrink:0}}>{"("}{reviewData.detail[newIndex]}{")"}</Typography>
+                                        </Stack>
+                                    })}
+                                </Stack>
+                            </Stack>
+                            <Divider orientation="horizontal" flexItem />
+                            <Stack padding={{xs:"40px 0 40px 0"}}>
+                                <Stack gap={"10px"}>
+                                    {!isReviewOn?<Button onClick={()=>setReviewOn(true)}>Leave a review</Button>:
+                                    <Box sx={{width:"100%",position:"relative"}}>
+                                        <TextField id="outlined-basic" sx={{width:"100%"}} label="Review" rows={5} variant="outlined" multiline/>
+                                        <IconButton sx={{position:"absolute",bottom:0,right:0}} onClick={()=>setReviewOn(false)}>
+                                            <Send/>
+                                        </IconButton>
+                                    </Box>}
+                                    <FormControl size="small">
+                                        <Select sx={{padding:"0"}} value={selectSort} onChange={(e)=>{setSort(e.target.value)}} id={"sortOption"}>
+                                            {reviewSortOption.map((item)=><MenuItem key={item.name} value={item.value}>{item.name}</MenuItem>)}
+                                        </Select>
+                                    </FormControl>
+                                </Stack>
+                            </Stack>
                         </TabContent>
                     </Box>
                 </Box>

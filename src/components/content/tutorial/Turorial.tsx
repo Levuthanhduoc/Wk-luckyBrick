@@ -4,32 +4,35 @@ import { useTranslation } from "react-i18next";
 import CutBar from "../../extra/cutBar";
 
 import placeHolder2 from '../../../assets/image/placeholder/placeholder2.png'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LocalFireDepartment, NewReleases, Shuffle, TipsAndUpdates } from "@mui/icons-material";
+import fetchData from "../../../assets/module/fecthData";
 interface defaultData{
+    id:number
     name:string,
     serial:string,
     picture:string
 }
-
+const tutorialApiUrl = import.meta.env.VITE_TUTORIAL_API
+const apiUrl = import.meta.env.VITE_API_URL
 function Tutorial(){
     const testData = [
-        {name:"test1",serial:"0000000",picture:placeHolder2},
-        {name:"test2",serial:"0000000",picture:placeHolder2},
-        {name:"test3",serial:"0000000",picture:placeHolder2},
-        {name:"test4",serial:"0000000",picture:placeHolder2},
-        {name:"test5",serial:"0000000",picture:placeHolder2},
-        {name:"test6",serial:"0000000",picture:placeHolder2},
-        {name:"test7",serial:"0000000",picture:placeHolder2},
-        {name:"test8",serial:"0000000",picture:placeHolder2},
-        {name:"test9",serial:"0000000",picture:placeHolder2},
-        {name:"test10",serial:"0000000",picture:placeHolder2},
-        {name:"test11",serial:"0000000",picture:placeHolder2},
-        {name:"test12",serial:"0000000",picture:placeHolder2},
-        {name:"test13",serial:"0000000",picture:placeHolder2},
-        {name:"test14",serial:"0000000",picture:placeHolder2},
-        {name:"test15",serial:"0000000",picture:placeHolder2},
-        {name:"test16",serial:"0000000",picture:placeHolder2}
+        {id:0,name:"test1",serial:"0000000",picture:placeHolder2},
+        {id:1,name:"test2",serial:"0000000",picture:placeHolder2},
+        {id:2,name:"test3",serial:"0000000",picture:placeHolder2},
+        {id:3,name:"test4",serial:"0000000",picture:placeHolder2},
+        {id:4,name:"test5",serial:"0000000",picture:placeHolder2},
+        {id:5,name:"test6",serial:"0000000",picture:placeHolder2},
+        {id:6,name:"test7",serial:"0000000",picture:placeHolder2},
+        {id:7,name:"test8",serial:"0000000",picture:placeHolder2},
+        {id:8,name:"test9",serial:"0000000",picture:placeHolder2},
+        {id:9,name:"test10",serial:"0000000",picture:placeHolder2},
+        {id:10,name:"test11",serial:"0000000",picture:placeHolder2},
+        {id:11,name:"test12",serial:"0000000",picture:placeHolder2},
+        {id:12,name:"test13",serial:"0000000",picture:placeHolder2},
+        {id:13,name:"test14",serial:"0000000",picture:placeHolder2},
+        {id:14,name:"test15",serial:"0000000",picture:placeHolder2},
+        {id:15,name:"test16",serial:"0000000",picture:placeHolder2}
     ]
     const {t} = useTranslation()
     const [page,setPage] = useState(1)
@@ -44,6 +47,16 @@ function Tutorial(){
         {name:"Featured",icon:<TipsAndUpdates/>,onClick:()=>{}},
         {name:"random",icon:<Shuffle/>,onClick:()=>{}}
     ]
+
+    const getData = async ()=>{ 
+        if(apiUrl){
+            const result = await fetchData({url:tutorialApiUrl,methoud:"get"})
+            if(result){
+                setItemData(result as defaultData[])
+            }
+        }
+    }
+
     const onSearch = (defaultData:defaultData[],query:string,section:string)=>{
         const filtered = defaultData.filter((item)=>item[section as "name"].toLowerCase().includes(query.toLowerCase()))
         setPage(1)
@@ -53,6 +66,10 @@ function Tutorial(){
             setItemData(filtered)
         }
     }
+
+    useEffect(()=>{
+        getData()
+    })
     return (
         <>
              <Box sx={{
@@ -76,7 +93,7 @@ function Tutorial(){
                     {itemData.map((item,index)=>{
                             if(index >= (page-1)*12&&index<page*12){
                                 return<Grid2 key={item.name} size={1}>
-                                    <GuideCard sx={{minWidth:"200px",maxWidth:"500px"}} items={item}/>
+                                    <GuideCard sx={{minWidth:"200px",maxWidth:"500px"}} items={{...item,picture:apiUrl+item.picture}}/>
                                 </Grid2>
                             }
                         }
