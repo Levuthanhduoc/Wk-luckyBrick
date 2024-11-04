@@ -47,11 +47,11 @@ function TutorialDetail(){
     const [tab,settab] = useState(0)
     const [itemData,setItemData] = useState<defaultData>()
     const {id}=useParams()
-    const tabItems = [
-        {id:"tab-0",name:"Book 1"},
-        {id:"tab-1",name:"Book 2"},
-        {id:"tab-2",name:"Book 3"},
-    ]
+    // const tabItems = [
+    //     {id:"tab-0",name:"Book 1"},
+    //     {id:"tab-1",name:"Book 2"},
+    //     {id:"tab-2",name:"Book 3"},
+    // ]
     const getData = async ()=>{ 
         if(apiUrl){
             const result = await fetchData({url:tutorialApiUrl + id,methoud:"get"})

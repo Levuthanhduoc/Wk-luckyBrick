@@ -1,22 +1,18 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import './App.css'
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { CssBaseline } from '@mui/material';
-import { BrowserRouter } from 'react-router-dom';
+import { CircularProgress, CssBaseline } from '@mui/material';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-
-const BaseHeader = React.lazy(()=>import('./components/base/baseHeader'))
-const BaseFooter = React.lazy(()=>import('./components/base/baseFooter'))
-const BaseContent = React.lazy(()=>import('./components/base/baseContent'))
-const ToTop = React.lazy(()=>import('./components/extra/goToptop'))
-
+const Base = React.lazy(()=>import('./components/base/base'))
+const AdminDashbroad = React.lazy(()=>import('./components/dashboard/Dashboard'))
 function App() {
   const theme = createTheme({
     components:{
       MuiCssBaseline:{
         styleOverrides:{
           body:{
-            backgroundImage: `linear-gradient(to bottom, #0A1D2E, #001F3F, #0033A0)`,
+            backgroundImage: `'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))'`,
           }
         }
       }
@@ -49,10 +45,12 @@ function App() {
         <ThemeProvider theme={theme}>
           <CssBaseline/>
           <BrowserRouter>  
-            <BaseHeader/>
-            <BaseContent/>
-            <ToTop/>
-            <BaseFooter/>
+          <Suspense fallback={<CircularProgress/>}>
+            <Routes>
+              <Route path={"/admin/*"} element={<AdminDashbroad/>}/>
+              <Route path={"/*"} element={<Base/>}/>
+            </Routes>                
+          </Suspense>                
           </BrowserRouter>
         </ThemeProvider>    
     </>

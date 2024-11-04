@@ -48,7 +48,7 @@ function WebGame(){
     const [currentCatalog,setCurrentCatalog] = useState("popular")
     const [isSearch,setSearch] = useState(false)
     const [itemData,setItemData] = useState(data)
-    const [trendData,setTrendData] = useState(trendingData)
+    const [trendData,_setTrendData] = useState(trendingData)
     const searchB = useRef(null)
     const [bannerSelect,setBannerSelect] = useState(1)
     const centerCss = {

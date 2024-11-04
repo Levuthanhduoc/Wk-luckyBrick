@@ -7,6 +7,8 @@ const ShopDetail = React.lazy(()=>import("./components/content/shop/shopDetail")
 const Turorial = React.lazy(()=>import("./components/content/tutorial/Turorial"))
 const TutorialDetail = React.lazy(()=>import("./components/content/tutorial/tutorialDetail"))
 const GameDetail = React.lazy(()=>import("./components/content/game/gameDetail"))
+const SignIn = React.lazy(()=>import("./components/sign-in/SignIn"))
+const Signup = React.lazy(()=>import("./components/sign-up/SignUp"))
 
 export default [
     {path:"/",alt:"Home",element:<Home/>},
@@ -17,4 +19,6 @@ export default [
     {path:"/game/:id",alt:"Game detail",element:<GameDetail/>},
     {path:"/tutorial",alt:"Creator Lab",element:<Turorial/>},
     {path:"/tutorial/:id",alt:"Creator Lab detail",element:<TutorialDetail/>},
+    {path:"/signin",alt:"Sign In",element:<SignIn/>},
+    {path:"/signup",alt:"Sign In",element:<Signup/>},
 ];

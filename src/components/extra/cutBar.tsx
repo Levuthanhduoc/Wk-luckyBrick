@@ -78,7 +78,7 @@ function cutBar (props:props){
                         cssBox = {...cssBox,flex:1,display:{xs:"none",md:"grid"}}
                     }
                     return<CutBox key={index} css = {cssBox} block={block} item = {item.name} hover={hover}>
-                        {search&&props.onSearch&&<SearchBar ref={searchRef} sx={{flex:1,margin:"0 15px 0 15px"}} onSearch={props.onSearch} />}
+                        {search&&props.onSearch&&<SearchBar ref={searchRef} sx={{flex:1,margin:"0 15px 0 15px"}} onSearch={props.onSearch as (text:string)=>void} />}
                     </CutBox>   
                     })}
             </Box>

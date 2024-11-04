@@ -1,4 +1,5 @@
 import { Box, Slide } from "@mui/material";
+import SignIn from "../../sign-in/SignIn";
 
 function Home(){
     return (
@@ -6,7 +7,7 @@ function Home(){
             <Slide direction="left" in={true} timeout={500}>
                 <Box>
                     <Box className="ad-banner">
-                        home
+                        
                     </Box>
                 
                 </Box>

@@ -1,6 +1,6 @@
 import { Divider, Rating, Stack, Typography } from "@mui/material"
 
-function CommentBox(id:number|string){
+function CommentBox(_id:number|string){
     return(
         <>  
             <Divider orientation="horizontal" flexItem/>
