@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react'
+import React, { createContext, Suspense, useState } from 'react'
 import './App.css'
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { CircularProgress, CssBaseline } from '@mui/material';
@@ -7,6 +7,8 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 const Base = React.lazy(()=>import('./components/base/base'))
 const AdminDashbroad = React.lazy(()=>import('./components/dashboard/Dashboard'))
 function App() {
+  const Context = createContext<unknown>(null)
+  const [snack,setSnack] = useState({isOpen:false,message:""})
   const theme = createTheme({
     components:{
       MuiCssBaseline:{
@@ -42,6 +44,7 @@ function App() {
   
   return (
     <>
+      <Context.Provider value={{snack,setSnack}}>
         <ThemeProvider theme={theme}>
           <CssBaseline/>
           <BrowserRouter>  
@@ -53,6 +56,7 @@ function App() {
           </Suspense>                
           </BrowserRouter>
         </ThemeProvider>    
+      </Context.Provider>
     </>
   )
 }

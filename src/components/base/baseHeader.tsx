@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -13,19 +13,64 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import {FormControl, MenuItem, Select, useColorScheme } from '@mui/material';
+import {Menu, Link as MuiLink} from '@mui/material';
+import {Avatar, FormControl, MenuItem, Select, useColorScheme } from '@mui/material';
 import {useTranslation} from 'react-i18next'
 import { Link,useLocation,useNavigate } from 'react-router-dom';
 
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
+import ShoppingCartOutlinedIcon from'@mui/icons-material/ShoppingCartOutlined'
+import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined'
 
 import navItems from '../../_navItem'
-import toolItems from '../../_toolItem'
 import langConfig from '../../assets/language/config'
+import cookieToObject from '../../assets/module/cookie2Object';
+
+interface freeObject {
+  [key:string]:string
+}
 
 const drawerWidth = 240;
+
+const ChangeAvatar = (props:{data:freeObject|null })=>{
+  const mountRef = useRef<HTMLButtonElement|null>(null)
+  const [isOpen,setOpen] = useState(false)
+  const onclick = ()=>{
+    setOpen(true)
+  }
+
+  const logout = ()=>{
+  }
+
+  return(
+    <>
+     {props.data&&props.data["name"]?
+        <Button ref={mountRef} sx={{minWidth:0,color: '#fff' }} onClick={onclick}>
+            <Avatar>{props.data["name"][0]}</Avatar>
+        </Button>
+      :<Link to={"/signin"}>
+        <Button sx={{minWidth:0,color: '#fff' }}>
+            <PermIdentityOutlinedIcon/>
+        </Button>
+      </Link>}
+      <Menu
+        id="basic-menu"
+        anchorEl={mountRef.current}
+        open={isOpen}
+        onClose={()=>setOpen(false)}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+        }}
+      >
+        <MenuItem onClick={()=>{console.log("a")}}>Profile</MenuItem>
+        <MenuItem onClick={()=>{console.log("a")}}>My account</MenuItem>
+        <MenuItem onClick={()=>{console.log("a")}}>Logout</MenuItem>
+      </Menu>
+    </>
+  )
+}
 
 
 function BaseHeader(){
@@ -35,6 +80,7 @@ function BaseHeader(){
   const navigate = useNavigate()
   const {t,i18n:{changeLanguage}} = useTranslation();
   const location = useLocation()
+  const [userInfo,setUserInfo] = useState<freeObject|null>(null)
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
   }
@@ -103,6 +149,16 @@ function BaseHeader(){
 
   const container = window !== undefined ? () => window.document.body : undefined;
 
+  const getUserInfo = ()=>{
+    const info = cookieToObject()
+    setUserInfo(info)
+  }
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(()=>{
+    getUserInfo()
+  },[])
+
   return (
     <Box className="app-header" sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -132,15 +188,19 @@ function BaseHeader(){
                 </Button>
               </Link>
             ))}
+            {userInfo&&(userInfo["role"]=="admin"?<MuiLink href={"/admin"}>
+              <Button sx={{color: `${location.pathname == "Admin"?"#007bff":'#fff'}`}}>
+                {t("Admin")}
+              </Button>
+            </MuiLink>:"")}
           </Box>
           <Box sx={{display:'block'}}>
-            {toolItems.map((item,index) => (
-              <Link key={index} to={item.path}>
+              <ChangeAvatar data={userInfo}/>
+              <Link to={""}>
                 <Button sx={{minWidth:0,color: '#fff' }}>
-                  {item.icon}
+                  <ShoppingCartOutlinedIcon/>
                 </Button>
               </Link>
-            ))}
             <Button onClick={()=>changeTheme()} sx={{minWidth:0,color: '#fff' }}>
                 {
                   mode =="light"?<LightModeOutlinedIcon/>:
