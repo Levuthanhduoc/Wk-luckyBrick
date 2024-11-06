@@ -1,4 +1,5 @@
-import {useEffect, useRef, useState} from 'react';
+import { freeObject,contextInterface, apiResponseInterface } from '../../AppTyscript';
+import {useContext, useEffect, useRef, useState} from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -27,21 +28,49 @@ import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined'
 import navItems from '../../_navItem'
 import langConfig from '../../assets/language/config'
 import cookieToObject from '../../assets/module/cookie2Object';
-
-interface freeObject {
-  [key:string]:string
-}
+import { Context } from './ContextWarper';
 
 const drawerWidth = 240;
+const apiUrl = import.meta.env.VITE_API_URL
 
 const ChangeAvatar = (props:{data:freeObject|null })=>{
   const mountRef = useRef<HTMLButtonElement|null>(null)
   const [isOpen,setOpen] = useState(false)
+  const {setSnack,setLogin} =useContext(Context) as contextInterface
+  const navigate = useNavigate()
+
   const onclick = ()=>{
     setOpen(true)
   }
 
-  const logout = ()=>{
+  const logout = async ()=>{
+    try{
+      let result = await fetch( apiUrl + "users/logout",{
+          method: 'POST',
+          credentials: 'include',
+      })
+      if(result.ok){
+        const response = await result.json() as apiResponseInterface;
+        if(response.status){
+          const cookieJson = cookieToObject()
+          if(cookieJson){
+            const expires = new Date(Date.now()-1000)
+            for(let i in cookieJson){
+              document.cookie = `${i}="";expires=${expires};`
+            }
+          }
+            setSnack({isOpen:true,message:response.data.message[0]});
+            setLogin(false)
+            setOpen(false)
+            navigate("/");
+        }else{
+            setSnack({isOpen:true,message:"Oop something happen please try again"});
+        }
+      }
+    }catch(err){
+      console.log(err)
+        setSnack({isOpen:true,message:"Oop something happen please try again"});
+    }
   }
 
   return(
@@ -66,7 +95,7 @@ const ChangeAvatar = (props:{data:freeObject|null })=>{
       >
         <MenuItem onClick={()=>{console.log("a")}}>Profile</MenuItem>
         <MenuItem onClick={()=>{console.log("a")}}>My account</MenuItem>
-        <MenuItem onClick={()=>{console.log("a")}}>Logout</MenuItem>
+        <MenuItem onClick={logout}>Logout</MenuItem>
       </Menu>
     </>
   )
@@ -81,6 +110,7 @@ function BaseHeader(){
   const {t,i18n:{changeLanguage}} = useTranslation();
   const location = useLocation()
   const [userInfo,setUserInfo] = useState<freeObject|null>(null)
+  const {isLogin} = useContext(Context) as contextInterface
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
   }
@@ -157,7 +187,7 @@ function BaseHeader(){
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(()=>{
     getUserInfo()
-  },[])
+  },[isLogin])
 
   return (
     <Box className="app-header" sx={{ display: 'flex' }}>

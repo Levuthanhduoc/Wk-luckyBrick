@@ -9,9 +9,10 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import AppNavbar from './components/AppNavbar';
 import Header from './components/Header';
-import MainGrid from './components/MainGrid';
+import MainGrid from './components/mainBody/MainGrid';
 import SideMenu from './components/SideMenu';
 import AppTheme from '../shared-theme/AppTheme';
+import Copyright from './internals/components/Copyright';
 import {
   chartsCustomizations,
   dataGridCustomizations,
@@ -41,7 +42,7 @@ export default function Dashboard(props: { disableCustomTheme?: boolean }) {
             backgroundColor: theme.vars
               ? `rgba(${theme.vars.palette.background.defaultChannel} / 1)`
               : alpha(theme.palette.background.default, 1),
-            overflow: 'auto',
+            overflow: 'auto'
           })}
         >
           <Stack
@@ -51,10 +52,12 @@ export default function Dashboard(props: { disableCustomTheme?: boolean }) {
               mx: 3,
               pb: 5,
               mt: { xs: 8, md: 0 },
+              display:"flex",flexDirection:"column",minHeight:"100vh"
             }}
           >
             <Header />
             <MainGrid />
+            <Copyright sx={{ my: 4 }} />
           </Stack>
         </Box>
       </Box>

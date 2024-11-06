@@ -1,14 +1,16 @@
-import React, { createContext, Suspense, useState } from 'react'
+import React, {Suspense, useState} from 'react'
 import './App.css'
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { CircularProgress, CssBaseline } from '@mui/material';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { ContextWarper } from './components/base/ContextWarper';
 
 const Base = React.lazy(()=>import('./components/base/base'))
 const AdminDashbroad = React.lazy(()=>import('./components/dashboard/Dashboard'))
+const SnackNotification = React.lazy(()=>import('./components/extra/snackNotification'))
 function App() {
-  const Context = createContext<unknown>(null)
   const [snack,setSnack] = useState({isOpen:false,message:""})
+  const [isLogin,setLogin] = useState(false)
   const theme = createTheme({
     components:{
       MuiCssBaseline:{
@@ -44,7 +46,7 @@ function App() {
   
   return (
     <>
-      <Context.Provider value={{snack,setSnack}}>
+      <ContextWarper value ={{snack,setSnack,isLogin,setLogin}} >
         <ThemeProvider theme={theme}>
           <CssBaseline/>
           <BrowserRouter>  
@@ -55,8 +57,9 @@ function App() {
             </Routes>                
           </Suspense>                
           </BrowserRouter>
+          <SnackNotification/>
         </ThemeProvider>    
-      </Context.Provider>
+      </ContextWarper>
     </>
   )
 }

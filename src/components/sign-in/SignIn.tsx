@@ -16,6 +16,8 @@ import ForgotPassword from './ForgotPassword';
 import AppTheme from '../shared-theme/AppTheme';
 import ColorModeSelect from '../shared-theme/ColorModeSelect';
 import { useNavigate } from 'react-router-dom';
+import { contextInterface } from '../../AppTyscript';
+import { Context } from '../base/ContextWarper';
 
 interface resData{
   status:boolean,
@@ -79,6 +81,8 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [open, setOpen] = React.useState(false);
+  const {setLogin} =React.useContext(Context) as contextInterface
+
   const navigation = useNavigate()
 
   const handleClickOpen = () => {
@@ -109,6 +113,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
           const expires = new Date(Date.now() + 23 * 60 * 60 * 1000)
           document.cookie = `name=${resData.data.name};expires=${expires};`
           document.cookie = `role=${resData.data.role};expires=${expires};`
+          setLogin(true)
           navigation('/')
           return
         } else {
