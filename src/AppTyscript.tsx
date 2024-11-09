@@ -23,6 +23,8 @@ interface apiResponseInterface{
       name:string,
       role:string,
       password:string,
+      columnName:string[],
+      columnType:string[],
       message:string[],
       [key:string]:unknown
     }

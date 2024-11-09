@@ -75,6 +75,10 @@
     cursor: pointer;
 }
 
+.rotatingElement {
+    animation: rotate360 2s linear infinite;
+}
+
 .salePill{
     background-color: rgb(252, 87, 50);
     border-radius: 28px;
@@ -97,5 +101,14 @@
     100% {
         background-position:0% 50%;
     }
-  }
+}
+
+@keyframes rotate360 {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(-360deg);
+    }
+}
 

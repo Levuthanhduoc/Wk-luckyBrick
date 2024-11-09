@@ -27,9 +27,6 @@ const secondaryListItems = [
 export default function MenuContent() {
   const navigate = useNavigate()
   const location = useLocation()
-  React.useEffect(()=>{
-    console.log(location.pathname)
-  },[]) 
   return (
     <Stack sx={{ flexGrow: 1, p: 1, justifyContent: 'space-between' }}>
       <List dense>

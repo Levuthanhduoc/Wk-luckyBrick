@@ -101,7 +101,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
     const data = new FormData(event.currentTarget);
     const jsonData = JSON.stringify({ name: data.get("username"), password: data.get("password") })
     try {
-      let result = await fetch( apiUrl + 'users/login', {
+      const result = await fetch( apiUrl + 'users/login', {
         method: 'POST',
         body: jsonData,
         credentials: 'include',

@@ -1,27 +1,30 @@
 import { Send } from "@mui/icons-material";
-import { Box, Button, Container, FormControl, FormLabel, Stack, TextField } from "@mui/material";
-import { FormEvent, ReactElement, useContext, useState } from "react";
+import { Box, Button,CircularProgress,FormControl, Stack, TextField, Typography } from "@mui/material";
+import { FormEvent, ReactElement, useContext, useEffect, useRef, useState } from "react";
 import { apiResponseInterface, contextInterface } from "../../../../../AppTyscript";
 import { Context } from "../../../../base/ContextWarper";
 import DataTable from "../../../../extra/DataTable";
+import { v4 as uuidv4 } from 'uuid'
 
 const apiUrl = import.meta.env.VITE_API_URL
 
 export default function DataQuery(){
-    const sentMessageStyle ={ backgroundColor:"#5C6BC0",alignSelf:"end"}
+    const sentMessageStyle ={ backgroundColor:"#5C6BC0",margin:"10px 0 10px 0",alignSelf:"end"}
     const receivedMessageStyle= {backgroundColor:"#B0BEC5",alignSelf:"start"}
-    const messageBoxStyle = {padding:"5px 15px 5px 15px", borderRadius:"15px"}
+    const messageBoxStyle = {padding:"5px 15px 5px 15px",maxWidth:"80%",wordWrap:"break-word", borderRadius:"15px"}
     const {setSnack}=useContext(Context) as contextInterface
     const [messageStack,setMessageStack] = useState<ReactElement[]>([])
+    const [loading,setloading]= useState(false)
+    const archorRef = useRef<HTMLDivElement>(null)
 
     const onSubmit = async(e:FormEvent<HTMLFormElement>)=>{
         e.preventDefault()
         const data = new FormData(e.currentTarget);
         const queryText = data.get("query")
         const jsonData = JSON.stringify({command:queryText})
-        let newMessage = [...messageStack]
+        const newMessage = [...messageStack]
         try {
-            let result = await fetch( apiUrl + 'query', {
+            const result = await fetch( apiUrl + 'query', {
                 method: 'post',
                 body: jsonData,
                 credentials: 'include',
@@ -29,15 +32,19 @@ export default function DataQuery(){
             })
             if (result.ok) {
                 const resData = await result.json() as apiResponseInterface
-                newMessage.push(<Box sx={{...messageBoxStyle,...sentMessageStyle}}>{queryText as string}</Box>)
+                newMessage.push(<Box key={uuidv4()} sx={{...messageBoxStyle,...sentMessageStyle}}>{queryText as string}</Box>)
                 if(resData.status){
                     newMessage.push(
-                        <DataTable 
+                        <DataTable key={uuidv4()}
                             sx={{...sentMessageStyle,...receivedMessageStyle, maxHeight: 400, width: '100%' }} 
                             data={resData.data.rows as []}
                         />)
                 }else{
-                    newMessage.push(<Box sx={{...messageBoxStyle,...receivedMessageStyle}}>{JSON.stringify(resData)}</Box>)
+                    const errText = []
+                    for(const i in resData.data.message){
+                        errText.push(<Typography key={i} sx={{paddingLeft:"10px"}}>{i}:{resData.data.message[i]}</Typography>)
+                    }
+                    newMessage.push(<Box key={uuidv4()} sx={{...messageBoxStyle,...receivedMessageStyle}}>{"{"}{errText}{"}"}</Box>)
                 }
             }
         } catch (err) {
@@ -49,16 +56,30 @@ export default function DataQuery(){
             }
             setSnack({isOpen:true,message:errText})
         }
+        setloading(false)
         setMessageStack(newMessage)
     }
 
+    useEffect(()=>{
+        const resetScroll = setTimeout(()=>{
+            if(archorRef.current){
+                archorRef.current.scrollIntoView({behavior:"smooth",block:"nearest"})
+            }    
+        },500)
+        return ()=>{
+            clearTimeout(resetScroll)
+        }
+    },[loading])
     return(
         <>
             <Stack position={"relative"} width={"100%"} minHeight={"80vh"}>
-                <Stack sx={{display:"flex",overflow:"auto",height:"80vh"}}>
+                <Stack sx={{display:"flex",overflowY:"auto",scrollbarWidth: "none",height:"80vh"}}>
                     {messageStack}
+                    <CircularProgress sx={{alignSelf:"end",display:`${loading?"block":"none"}`}} size={"20px"}/>
+                    <div id="archor" ref={archorRef}></div>
                 </Stack>
-                <Box component={"form"} onSubmit={onSubmit} position={{xs:"fixed",md:"absolute"}} bottom={0} left={0} display={"flex"} flexDirection={"row"} width={"100%"}>
+                <Box component={"form"} onSubmit={(e)=>{onSubmit(e);setloading(true)}} position={"absolute"} 
+                        bottom={"-5%"} left={0} display={"flex"} flexDirection={"row"} width={"100%"}>
                     <FormControl sx={{flex:1,display:"flex",flexDirection:"row"}}>
                         <TextField
                             // error={usernameError}

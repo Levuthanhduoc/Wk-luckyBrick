@@ -2,11 +2,11 @@ import * as React from 'react';
 import Stack from '@mui/material/Stack';
 import NotificationsRoundedIcon from '@mui/icons-material/NotificationsRounded';
 import CustomDatePicker from './CustomDatePicker';
-import NavbarBreadcrumbs from './NavbarBreadcrumbs';
 import MenuButton from './MenuButton';
 import ColorModeIconDropdown from '../../shared-theme/ColorModeIconDropdown';
 
 import Search from './Search';
+import Breakcrumb from '../../extra/breadcrumb';
 
 export default function Header() {
   return (
@@ -22,7 +22,7 @@ export default function Header() {
       }}
       spacing={2}
     >
-      <NavbarBreadcrumbs />
+      <Breakcrumb edit={[{current:"admin",edited:"dashboard"}]}/>
       <Stack direction="row" sx={{ gap: 1 }}>
         <Search />
         <CustomDatePicker />

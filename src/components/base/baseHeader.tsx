@@ -45,7 +45,7 @@ const ChangeAvatar = (props:{data:freeObject|null })=>{
 
   const logout = async ()=>{
     try{
-      let result = await fetch( apiUrl + "users/logout",{
+      const result = await fetch( apiUrl + "users/logout",{
           method: 'POST',
           credentials: 'include',
       })
@@ -55,7 +55,7 @@ const ChangeAvatar = (props:{data:freeObject|null })=>{
           const cookieJson = cookieToObject()
           if(cookieJson){
             const expires = new Date(Date.now()-1000)
-            for(let i in cookieJson){
+            for(const i in cookieJson){
               document.cookie = `${i}="";expires=${expires};`
             }
           }

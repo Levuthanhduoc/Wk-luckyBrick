@@ -1,23 +1,30 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import { DataGrid, GridColDef, GridColType } from '@mui/x-data-grid';
+import { DataGrid,GridColType, GridSlotsComponent} from '@mui/x-data-grid';
 import { SxProps } from '@mui/material';
+interface renderType{
+  render:(props:unknown)=>React.ReactElement|React.ReactElement
+}
 interface propsType{
   data:unknown[],
   sx:SxProps,
+  renderCell?:{[key:string]:renderType}
+  slot?:Partial<GridSlotsComponent>
 }
 
 export default function DataTable(props:propsType) {
-  const [column,setColumn] = React.useState<unknown[]>([])
-  const [row,setRow] = React.useState<unknown[]>([])
-
-  const processData = ()=>{
-    let newcolumns = []
-    let newRows:unknown[] = []
+  const newcolumns = []
+    let newRows:unknown[] =[]
     if(props.data){
       if(Array.isArray(props.data)){
         let isIdExist = false
-        for(let i in props.data[0] as object){
+        const isColumsExist = []
+        for(const i in props.data[0] as object){
+          let renderElement
+          if(props.renderCell&&props.renderCell[i]){
+            renderElement = props.renderCell.render
+            isColumsExist.push(i)
+          }
           if(i == "id"){
             newcolumns.push({ field: 'id', headerName: 'ID', width: 90 })
             isIdExist = true
@@ -27,32 +34,42 @@ export default function DataTable(props:propsType) {
               headerName: i,
               type: typeof(i) as undefined|GridColType,
               width: 110,
-              editable: true,
+              renderCell:renderElement,
             })
+          }
+        }
+        if(props.renderCell){
+          const newColumnName = props.renderCell
+          for(const i in newColumnName ){
+            if(isColumsExist.indexOf(i) == -1){
+              newcolumns.push({
+                field:i,
+                headerName: i,
+                type: typeof(i) as undefined|GridColType,
+                width: 110,
+                renderCell:props.renderCell[i].render,
+              })
+            }
           }
         }
         if(!isIdExist){
           let count = 0
-          for(let i of props.data as []){
-            newRows.push({...i as {},id:count})
+          for(const i of props.data as []){
+            newRows.push({...i as object,id:count})
+            count = count + 1
           }
         }else{
           newRows = [...props.data as []]
         }
       }
     }
-    setRow(newRows)
-    setColumn(newcolumns)
-  }
-  React.useEffect(()=>{
-    processData()
-  },[])
+  
   return (
     <>
-    {row.length !=0&&<Box sx={{...props.sx}}>
+    <Box sx={{...props.sx}}>
         <DataGrid
-          rows={row as []}
-          columns={column as []}
+          rows={newRows as []}
+          columns={newcolumns as []}
           initialState={{
             pagination: {
               paginationModel: {
@@ -63,8 +80,9 @@ export default function DataTable(props:propsType) {
           pageSizeOptions={[5]}
           checkboxSelection
           disableRowSelectionOnClick
+          slots={props.slot||{}}
         />
-      </Box>}
+      </Box>
     </>
   );
 }
