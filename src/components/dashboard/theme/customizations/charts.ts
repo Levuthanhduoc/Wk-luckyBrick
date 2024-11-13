@@ -34,9 +34,11 @@ export const chartsCustomizations: ChartsComponents<Theme> = {
       mark: ({ theme }) => ({
         ry: 6,
         boxShadow: 'none',
+        // @ts-ignore
         border: `1px solid ${(theme.vars || theme).palette.divider}`,
       }),
       table: ({ theme }) => ({
+        // @ts-ignore
         border: `1px solid ${(theme.vars || theme).palette.divider}`,
         borderRadius: theme.shape.borderRadius,
         background: 'hsl(0, 0%, 100%)',

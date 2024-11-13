@@ -1,59 +1,23 @@
 import { Accordion, AccordionDetails, AccordionSummary, Backdrop, Box, Button, Fade, FormControl, Grid2,MenuItem, Pagination, Select,TextField, Typography} from "@mui/material";
 import ShopBox from "../../extra/shopCard";
 import CS from '../../../assets/css/component.module.css'
-
-import placeHolder from '../../../assets/image/placeholder/placeholder1.webp'
 import {Close, Done, ExpandMore, FilterListOutlined} from "@mui/icons-material";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Moneyslider } from "./moneySlider";
 import { ThemeChecker } from "./themeChecker";
 import fetchData from "../../../assets/module/fecthData";
 
-const shopApiUrl = import.meta.env.VITE_SHOP_API
 const apiUrl = import.meta.env.VITE_API_URL
 interface itemData {
     id:number|string,
     name:string,
     price:number,
-    image:string,
+    image_uploaded_png:string,
     sale?:number,
-    time?:string,
+    timesale?:string,
 }
 function Shop(){
-    const test:itemData[]  = [
-        {id: "001", name: "Lego Supercar",image:placeHolder, price: 100, sale: 25, time: "10/25/2024"},
-        {id: "002", name: "Lego Castle Siege",image:placeHolder, price: 150, sale: 50, time: "11/10/2024"},
-        {id: "003", name: "Lego Space Shuttle",image:placeHolder, price: 200, sale: 35, time: "10/30/2024"},
-        {id: "004", name: "Lego Pirate Ship",image:placeHolder, price: 250, sale: 75, time: "11/5/2024"},
-        {id: "005", name: "Lego Dinosaur Attack",image:placeHolder, price: 90, sale: 60, time: "10/28/2024"},
-        {id: "006", name: "Lego Robot Warrior",image:placeHolder, price: 80, sale: 15, time: "11/15/2024"},
-        {id: "007", name: "Lego City Train",image:placeHolder, price: 130, sale: 20, time: "10/27/2024"},
-        {id: "008", name: "Lego Jungle Adventure",image:placeHolder, price: 110, sale: 40, time: "11/8/2024"},
-        {id: "009", name: "Lego Arctic Expedition",image:placeHolder, price: 140, sale: 30, time: "10/26/2024"},
-        {id: "010", name: "Lego Fire Station",image:placeHolder, price: 75, sale: 85, time: "11/12/2024"},
-        {id: "011", name: "Lego Space Colony",image:placeHolder, price: 180, sale: 70, time: "11/7/2024"},
-        {id: "012", name: "Lego Wild West Fort",image:placeHolder, price: 125, sale: 45, time: "10/24/2024"},
-        {id: "013", name: "Lego Police Chase",image:placeHolder, price: 95, sale: 55, time: "11/1/2024"},
-        {id: "014", name: "Lego Mars Mission",image:placeHolder, price: 160, sale: 65, time: "11/2/2024"},
-        {id: "015", name: "Lego Dragon's Lair",image:placeHolder, price: 170, sale: 20, time: "10/22/2024"},
-        {id: "016", name: "Lego Submarine",image:placeHolder, price: 120, sale: 90, time: "11/4/2024"},
-        {id: "017", name: "Lego Safari Jeep",image:placeHolder, price: 85, sale: 25, time: "11/3/2024"},
-        {id: "018", name: "Lego Underwater Base",image:placeHolder, price: 145, sale: 50, time: "10/21/2024"},
-        {id: "019", name: "Lego Space Battle",image:placeHolder, price: 190, sale: 40, time: "10/29/2024"},
-        {id: "020", name: "Lego Medieval Town",image:placeHolder, price: 105, sale: 60, time: "11/11/2024"},
-        {id: "021", name: "Lego Futuristic Racer",image:placeHolder, price: 115, sale: 35, time: "10/31/2024"},
-        {id: "022", name: "Lego Pirate Cove",image:placeHolder, price: 135, sale: 80, time: "10/23/2024"},
-        {id: "023", name: "Lego Sky Lab",image:placeHolder, price: 200, sale: 15, time: "11/9/2024"},
-        {id: "024", name: "Lego Desert Raiders",image:placeHolder, price: 90, sale: 55, time: "10/20/2024"},
-        {id: "025", name: "Lego Aquatic World",image:placeHolder, price: 160, sale: 45, time: "11/14/2024"},
-        {id: "026", name: "Lego Cyber Fortress",image:placeHolder, price: 140, sale: 65, time: "10/19/2024"},
-        {id: "027", name: "Lego Robo Armory",image:placeHolder, price: 175, sale: 10, time: "11/13/2024"},
-        {id: "028", name: "Lego Steampunk City",image:placeHolder, price: 150, sale: 75, time: "11/6/2024"},
-        {id: "029", name: "Lego Mountain Expedition",image:placeHolder, price: 110, sale: 85, time: "10/18/2024"},
-        {id: "030", name: "Lego Volcano Escape",image:placeHolder, price: 100, sale: 20, time: "11/5/2024"}
-    ]
-
     const {t} = useTranslation()
 
     const availabilityOption = [
@@ -75,7 +39,8 @@ function Shop(){
     const [priceRange,setPriceRange] = useState<number|number[]>([25,300])
     const [avalible,setAvalible] = useState(availabilityOption)
     const [theme,setTheme] = useState(themeOption)
-    const [itemData,setItemData] =useState<itemData[]>(test)
+    const [itemData,setItemData] =useState<itemData[]>()
+    const originData = useRef<itemData[]>()
     
     
     const centerCss = {
@@ -119,14 +84,23 @@ function Shop(){
         }
     }
     
+   
     const getData = async ()=>{ 
         if(apiUrl){
-            const result = await fetchData({url:shopApiUrl,methoud:"get"})
-            if(result){
-                setItemData(result as itemData[])
+            try {
+                const result = await fetchData({url:apiUrl +`legos/info?name=legos`,
+                    methoud:"get"})
+                if(result){
+                    const rowsData = (result as {[key:string]:unknown}).rows
+                    setItemData(rowsData as itemData[])
+                    originData.current = rowsData as itemData[]
+                }
+            } catch (error) {
+                console.log(error)
             }
         }
     }
+
 
     useEffect(()=>{
         getData()
@@ -154,7 +128,7 @@ function Shop(){
                     </Typography>
                     <Typography sx={{fontSize:"0.9em"}}>{t("common.welcomeSubBanner")}  </Typography>
                 </Box>
-                <Box sx={{
+                {itemData&&<Box sx={{
                     ...centerCss, 
                     display:"flex",flexDirection:"column",gap:"30px"}}
                     >
@@ -224,7 +198,7 @@ function Shop(){
                                             sx={{width:{xs:"100px",sm:"20vw"}}}
                                             onChange={(e)=>{
                                                 setSearchQuery(e.target.value)
-                                                onSearch(itemData,e.target.value,"name")
+                                                onSearch(originData.current||[],e.target.value,"name")
                                             }}
                                             value={searchQuery}
                                             id="searchBar"
@@ -247,7 +221,7 @@ function Shop(){
                             {itemData&&itemData.map((item,index)=>{
                                     if(index >= (page-1)*12&&index<page*12){
                                         return<Grid2 key={item.name} size={1}>
-                                            <ShopBox sx={{minWidth:"200px",maxWidth:"500px"}} id={`${item.id}`}  name={item.name} price={item.price} picture={apiUrl+item.image[0]} sale={item.sale||1 * 100} timer={item.time}/>
+                                            <ShopBox sx={{minWidth:"200px",maxWidth:"500px"}} id={`${item.id}`}  name={item.name} price={item.price} picture={apiUrl+"storage/"+item.image_uploaded_png[0]} sale={(item.sale||1 )* 100} timer={item.timesale}/>
                                         </Grid2>
                                     }
                                 }
@@ -256,7 +230,7 @@ function Shop(){
                         <Box sx={{display:"flex",justifyContent:"center"}}>
                             <Pagination count={Math.ceil(itemData.length/12)} page={page} onChange={(_e,value)=>setPage(value)} shape="rounded" />
                         </Box>
-                    </Box>
+                    </Box>}
                 </Box>
         </>
     )

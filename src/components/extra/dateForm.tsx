@@ -10,7 +10,8 @@ interface propsType{
     value?:string,
 }
 export default function DateForm (props:propsType){
-    const [value,setValue] = useState(props.value)
+    const timenow = new Date().toISOString()
+    const [value,setValue] = useState<string|undefined>(props.value||timenow)
     return(
         <>
             <Stack>
@@ -18,7 +19,7 @@ export default function DateForm (props:propsType){
                 <FormLabel htmlFor={props.name}>{upperCaseFirstLetter(props.name)}</FormLabel>
                 <TextField
                     sx={{display:"none"}}
-                    value={value||""}
+                    value={value}
                     id={props.name}
                     type="text"
                     name={props.name}
@@ -26,7 +27,7 @@ export default function DateForm (props:propsType){
                 />
                 </FormControl>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <MobileDateTimePicker onChange={(e)=>setValue(e?.toISOString())} sx={{...props.sx||""}} defaultValue={dayjs(value||'2022-04-17T15:30')} />
+                    <MobileDateTimePicker onChange={(e)=>setValue(e?.toISOString())} sx={{...props.sx||""}} defaultValue={dayjs(value)} />
                 </LocalizationProvider>
             </Stack>
         </>

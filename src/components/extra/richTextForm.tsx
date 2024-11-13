@@ -36,7 +36,9 @@ interface propsType{
     name:string,
     value?:string,
 }
-const extensions = [StarterKit,TextStyle,FontSize,Color,Highlight,
+const extensions = [StarterKit,TextStyle,FontSize,Color,Highlight.configure({
+    multicolor: true,
+  }),
     TextAlign.configure({
         types: ["heading", "paragraph"],
       }),Underline]
@@ -48,7 +50,7 @@ export const getHtml = (jsonString:JSONContent)=>{
 
 export function RichTextForm(props:propsType) {
     const rteRef = useRef<RichTextEditorRef>(null);
-    const [value,setValue] = useState(props.value)
+    const [value,setValue] = useState(props.value?JSON.stringify(props.value):"")
     return(
         <>
         <div onChange={()=>console.log("adada")}>
@@ -56,7 +58,7 @@ export function RichTextForm(props:propsType) {
               <FormLabel htmlFor={props.name}>{upperCaseFirstLetter(props.name)}</FormLabel>
               <TextField
                 sx={{width:"0",height:"0",opacity:"0",display:"none"}}
-                value={value||""}
+                value={value}
                 id={props.name}
                 type="text"
                 name={props.name}
@@ -67,7 +69,7 @@ export function RichTextForm(props:propsType) {
                 onUpdate={(e)=>setValue(JSON.stringify(e.editor.getJSON()))}
                 ref={rteRef}
                 extensions={extensions} // Or any Tiptap extensions you wish!
-                content="<p>Hello world</p>" // Initial content for the editor
+                content={props.value?getHtml((props.value as unknown) as JSONContent):"<p>Hello world</p>"} // Initial content for the editor
                 // Optionally include `renderControls` for a menu-bar atop the editor:
                 renderControls={() => (
                     <MenuControlsContainer>
@@ -76,7 +78,9 @@ export function RichTextForm(props:propsType) {
                     <MenuDivider />
                     <MenuSelectHeading />
                     <MenuSelectFontSize />
-                    <MenuButtonTextColor/>
+                    <MenuButtonTextColor PopperProps={{
+                        sx: { zIndex: (theme) => `${theme.zIndex.tooltip} !important` },
+                    }}/>
                     <MenuDivider />
                     <MenuButtonBold />
                     <MenuButtonItalic />
@@ -85,7 +89,9 @@ export function RichTextForm(props:propsType) {
                     <MenuDivider />
                     <MenuButtonOrderedList/>
                     <MenuButtonBulletedList/>
-                    <MenuButtonHighlightColor/>
+                    <MenuButtonHighlightColor PopperProps={{
+                        sx: { zIndex: (theme) => `${theme.zIndex.tooltip} !important` },
+                    }}/>
                     <MenuDivider />
                     <MenuButtonAlignLeft/> 
                     <MenuButtonAlignCenter/> 

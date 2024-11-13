@@ -8,9 +8,13 @@ import { ContextWarper } from './components/base/ContextWarper';
 const Base = React.lazy(()=>import('./components/base/base'))
 const AdminDashbroad = React.lazy(()=>import('./components/dashboard/Dashboard'))
 const SnackNotification = React.lazy(()=>import('./components/extra/snackNotification'))
+interface cartType{
+  [key:string]:string
+}
 function App() {
   const [snack,setSnack] = useState({isOpen:false,message:""})
   const [isLogin,setLogin] = useState(false)
+  const [cart,setCart] = useState<cartType[]>([])
   const theme = createTheme({
     components:{
       MuiCssBaseline:{
@@ -46,7 +50,7 @@ function App() {
   
   return (
     <>
-      <ContextWarper value ={{snack,setSnack,isLogin,setLogin}} >
+      <ContextWarper value ={{snack,setSnack,isLogin,setLogin,cart,setCart}} >
         <ThemeProvider theme={theme}>
           <CssBaseline/>
           <BrowserRouter>  

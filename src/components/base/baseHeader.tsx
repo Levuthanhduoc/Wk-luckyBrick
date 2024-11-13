@@ -14,14 +14,16 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import {Menu, Link as MuiLink} from '@mui/material';
-import {Avatar, FormControl, MenuItem, Select, useColorScheme } from '@mui/material';
+import {Badge, Menu, Link as MuiLink} from '@mui/material';
+import {Avatar, FormControl, MenuItem, Select, 
+  // useColorScheme 
+} from '@mui/material';
 import {useTranslation} from 'react-i18next'
 import { Link,useLocation,useNavigate } from 'react-router-dom';
 
-import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
-import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
-import Brightness4Icon from '@mui/icons-material/Brightness4';
+// import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
+// import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
+// import Brightness4Icon from '@mui/icons-material/Brightness4';
 import ShoppingCartOutlinedIcon from'@mui/icons-material/ShoppingCartOutlined'
 import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined'
 
@@ -103,38 +105,38 @@ const ChangeAvatar = (props:{data:freeObject|null })=>{
 
 
 function BaseHeader(){
-  const { mode, setMode } = useColorScheme();
+  // const { mode, setMode } = useColorScheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [language,setLanguage] = useState("en")
   const navigate = useNavigate()
   const {t,i18n:{changeLanguage}} = useTranslation();
   const location = useLocation()
   const [userInfo,setUserInfo] = useState<freeObject|null>(null)
-  const {isLogin} = useContext(Context) as contextInterface
+  const {isLogin,cart} = useContext(Context) as contextInterface
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
   }
 
-  if (!mode) {
-    return null;
-  }
-  const changeTheme = ()=>{
-    let option:string
-    switch(mode){
-      case "light":
-        option = "dark"
-        break;
-      case "dark":
-        option = "system"
-        break;
-      case "system":
-        option = "light"
-        break;
-      default:
-        option = "light"
-    }
-    setMode(option as "dark"|"light"|"system")
-  }
+  // if (!mode) {
+  //   return null;
+  // }
+  // const changeTheme = ()=>{
+  //   let option:string
+  //   switch(mode){
+  //     case "light":
+  //       option = "dark"
+  //       break;
+  //     case "dark":
+  //       option = "system"
+  //       break;
+  //     case "system":
+  //       option = "light"
+  //       break;
+  //     default:
+  //       option = "light"
+  //   }
+  //   setMode(option as "dark"|"light"|"system")
+  // }
 
   const LanguageSelect = ()=>{
     return(
@@ -226,16 +228,18 @@ function BaseHeader(){
           </Box>
           <Box sx={{display:'block'}}>
               <ChangeAvatar data={userInfo}/>
-              <Link to={""}>
+              <Link to={"cart"}>
                 <Button sx={{minWidth:0,color: '#fff' }}>
-                  <ShoppingCartOutlinedIcon/>
+                  <Badge color="secondary" badgeContent={cart?.length} max={999}>
+                    <ShoppingCartOutlinedIcon/>
+                  </Badge>
                 </Button>
               </Link>
-            <Button onClick={()=>changeTheme()} sx={{minWidth:0,color: '#fff' }}>
+            {/* <Button onClick={()=>changeTheme()} sx={{minWidth:0,color: '#fff' }}>
                 {
                   mode =="light"?<LightModeOutlinedIcon/>:
                   mode=="dark"?<DarkModeOutlinedIcon/>:<Brightness4Icon/>}
-            </Button>
+            </Button> */}
           </Box>
           <Box sx={{display:{xs:"none",sm:"block"},marginLeft:"6px",textAlign:"center"}}>            
             <LanguageSelect/>

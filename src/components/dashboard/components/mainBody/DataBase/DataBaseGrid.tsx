@@ -25,8 +25,10 @@ export default function DataBase() {
   const [itemData,setItemData] = React.useState< {[key: string]: unknown}>({})
   const [loadding,setLoading] = React.useState(false)
   const [confirm,setConfirm] = React.useState<null|string>(null)
-  const [addform,setAddform] = React.useState(false)
+  const [addform,setAddform] = React.useState<{status:boolean,update:number|string|null}>({status:false,update:null})
   const [backdrop,setBackdrop] = React.useState(false)
+
+  const closeAddform = {status:false,update:null}
 
   const RenderEditColumn = (grid:GridRenderCellParams) =>{
     return(
@@ -36,7 +38,10 @@ export default function DataBase() {
               setConfirm(`${grid.rowNode.id}`)
               setBackdrop(true)
             }}><Delete/></IconButton>
-          <IconButton><Edit/></IconButton>
+          <IconButton onClick={()=>{
+            setBackdrop(true);
+            setAddform({status:true,update:grid.rowNode.id})
+          }}><Edit/></IconButton>
         </Stack>
       </>
     )
@@ -71,6 +76,8 @@ export default function DataBase() {
             setItemData(newItemData)
           }else if(deleteRow){
             setSnack({isOpen:true,message:(resData.data.message as unknown) as string})
+            setBackdrop(false);
+            setConfirm(null);
             fetchTable({tableName:dataTable[tableType]})
           }else{
             setDatatable(resData.data.rows as string[])
@@ -95,10 +102,10 @@ export default function DataBase() {
   const CloseBackdrop = ()=>{
     return(
       <>
-        <IconButton sx={{position:"absolute",top:"10px",right:"10px"}} onClick={()=>{
+        <IconButton sx={{position:"absolute",zIndex:4,top:"0px",right:"0px"}} onClick={()=>{
           setBackdrop(false);
           setConfirm(null);
-          setAddform(false);
+          setAddform(closeAddform);
         }}><Close/></IconButton>
       </>
     )
@@ -125,7 +132,7 @@ export default function DataBase() {
         DataBase
       </Typography>
       <Backdrop
-        sx={() => ({ color: '#fff', zIndex:  3 })}
+        sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
         open={backdrop}
         >
         <>
@@ -140,7 +147,15 @@ export default function DataBase() {
             <Button size="small" onClick={()=>{setBackdrop(false);setConfirm(null)}}>CANCEL</Button>
           </CardActions>
         </Card>}
-        {addform&&<Box sx={{position:"relative"}}><CloseBackdrop/><AddForm tableName={dataTable[tableType]}/></Box>}
+        {addform.status&&<Box sx={{position:"relative"}}>
+          <CloseBackdrop/>
+          <AddForm tableName={dataTable[tableType]} update={addform.update as string}
+            onSubmit={()=> {
+              setBackdrop(false);
+              setAddform(closeAddform);
+              fetchTable({tableName:dataTable[tableType]})
+            }}/>
+        </Box>}
         </>
       </Backdrop>
       <Stack height="450px" width="100%">
@@ -165,7 +180,7 @@ export default function DataBase() {
               fetchTable({tableName:dataTable[tableType]})
               setLoading(true)
             }}><Replay className={loadding?CS.rotatingElement:""}/></IconButton>
-          <IconButton onClick={()=>{setBackdrop(true);setAddform(true)}}><Add/></IconButton>
+          <IconButton onClick={()=>{setBackdrop(true);setAddform({status:true,update:null});}}><Add/></IconButton>
         </Stack>
         {itemData[dataTable[tableType]]
           ?<DataTable 

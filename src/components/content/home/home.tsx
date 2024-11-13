@@ -1,5 +1,4 @@
 import { Box, Slide } from "@mui/material";
-import SignIn from "../../sign-in/SignIn";
 
 function Home(){
     return (

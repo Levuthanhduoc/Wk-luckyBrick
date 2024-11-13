@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import { DataGrid,GridColType, GridSlotsComponent} from '@mui/x-data-grid';
+import { DataGrid,GridColType, GridRenderCellParams, GridSlotsComponent} from '@mui/x-data-grid';
 import { SxProps } from '@mui/material';
 interface renderType{
   render:(props:unknown)=>React.ReactElement|React.ReactElement
@@ -12,6 +12,14 @@ interface propsType{
   slot?:Partial<GridSlotsComponent>
 }
 
+const RenderColumnValue = (params: GridRenderCellParams)=>{
+  let colValue = params.value
+  if(typeof(params.value)=="object"){
+    colValue = JSON.stringify(params.value)
+  }
+  return <span>{colValue}</span>
+}
+
 export default function DataTable(props:propsType) {
   const newcolumns = []
     let newRows:unknown[] =[]
@@ -20,9 +28,9 @@ export default function DataTable(props:propsType) {
         let isIdExist = false
         const isColumsExist = []
         for(const i in props.data[0] as object){
-          let renderElement
+          let renderElement = RenderColumnValue
           if(props.renderCell&&props.renderCell[i]){
-            renderElement = props.renderCell.render
+            renderElement = props.renderCell[i].render
             isColumsExist.push(i)
           }
           if(i == "id"){

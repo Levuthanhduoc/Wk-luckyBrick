@@ -36,7 +36,9 @@
         "search":"Search",
         "price":"Price",
         "availability":"Availability",
-        "theme":"Theme"
+        "theme":"Theme",
+        "tutorialBanner":"Unlock the World of LEGO",
+        "tutorialSubBanner":"Follow Our Easy Tutorials!"
     },
     "form":{
         "emailInput":"Enter you Email",

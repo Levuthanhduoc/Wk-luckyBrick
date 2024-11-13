@@ -1,3 +1,5 @@
+import { apiResponseInterface } from "../../AppTyscript"
+
 interface Option{
     cookies?:boolean,
 }
@@ -24,9 +26,10 @@ async function fetchData(props:FetchData){
     })
     if(res.ok){
         const itemdata = await res.json()
-        result = itemdata.data
+        result = itemdata.data as apiResponseInterface
     }else{
         result = false
+        console.log(res)
     }
     return result
 }

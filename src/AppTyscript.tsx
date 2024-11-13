@@ -7,12 +7,17 @@ interface snackInterface{
     isOpen:boolean,
     message:string
 }
+interface cartType{
+    [key:string]:string
+}
 
 interface contextInterface{
     snack:snackInterface,
     setSnack:Dispatch<SetStateAction<snackInterface>>,
     isLogin:boolean,
-    setLogin:Dispatch<SetStateAction<boolean>>
+    setLogin:Dispatch<SetStateAction<boolean>>,
+    cart:cartType[],
+    setCart:Dispatch<SetStateAction<cartType[]>>,
 }
 
 interface apiResponseInterface{
@@ -34,4 +39,5 @@ export type {
     snackInterface,
     contextInterface,
     apiResponseInterface,
+    cartType,
 }

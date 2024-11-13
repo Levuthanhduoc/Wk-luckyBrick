@@ -1,8 +1,6 @@
-import { Box, Button, Divider, Fade, FormControl, IconButton, MenuItem, Rating, Select, Stack, SxProps, Tab, Tabs, TextField, Typography } from "@mui/material"
+import { Box, Button, Divider, Fade, FormControl, IconButton, MenuItem, Rating, Select, Stack, SxProps, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs, TextField, Typography } from "@mui/material"
 import Breakcrumb from "../../extra/breadcrumb"
 import { SyntheticEvent, useEffect, useState } from "react"
-
-import testpic from '../../../assets/image/placeholder/placeholder1.webp'
 import PictureShowCase from "../../extra/pictureShowCase"
 import CountDown from "../../extra/countDownTimer"
 import CS from "../../../assets/css/component.module.css"
@@ -16,6 +14,9 @@ import zalopayIcon from '../../../assets/image/icon/zalo.png';
 import ProcessBar from "../../extra/processBar"
 import { useParams } from "react-router-dom"
 import fetchData from "../../../assets/module/fecthData"
+import { getHtml } from "../../extra/richTextForm"
+import { JSONContent } from "@tiptap/core"
+import Parser from 'html-react-parser';
 
 interface TabContentProps {
     children?: React.ReactNode,
@@ -27,18 +28,16 @@ interface TabContentProps {
 interface itemsData  {
     id:number,
     name:string,
-    image: string[] ,
+    image_uploaded_png: string[] ,
     price:number,
     sale:number,
-    description:string,
-    info:{
-        age:string,
-        pieces:string,
-        serial:string,
-        category:string
-    }
+    description:JSONContent|undefined,
+    age:string,
+    pieces:string,
+    serial:string,
+    category:string,
+    timesale:string
 }
-const shopApiUrl = import.meta.env.VITE_SHOP_API
 const apiUrl = import.meta.env.VITE_API_URL
 const centerCss = {
     maxWidth:"1540px",width:"100%",margin:"auto",
@@ -46,8 +45,6 @@ const centerCss = {
 }
 
 const TabContent = (props:TabContentProps)=>{
-    
-
     return(
         <Fade in={props.value == props.index} mountOnEnter unmountOnExit timeout={2000}>
             <Box role="tabpanel"
@@ -62,28 +59,13 @@ const TabContent = (props:TabContentProps)=>{
 }
 
 function ShopDetail(){
-
-    const items = {
-        id:161845156,
-        name:"Lego Dungeon and Dungeon",
-        image: [testpic,testpic,testpic,testpic,testpic,testpic,testpic,testpic,testpic,testpic,testpic,testpic,testpic,testpic],
-        price:10,
-        sale:0.2,
-        description:"test",
-        info:{
-            age:"18",
-            pieces:"3893",
-            serial:"000000",
-            category:"minifigure"
-        }
-    }
     const {id} = useParams()
     const [tab,settab] = useState(0)
     const [quantity,setQuantity] = useState(0)
     const [reviewScore,setReviewScore] = useState(0)
     const [selectSort,setSort] = useState<string>("relevant")
     const [isReviewOn,setReviewOn] = useState(false)
-    const [itemData,setItemData] = useState(items)
+    const [itemData,setItemData] = useState<itemsData>()
 
     const paymentMethod = [
         {name:"master card",icon:masterCardIcon},
@@ -125,9 +107,15 @@ function ShopDetail(){
     }
     const getData = async ()=>{ 
         if(apiUrl){
-            const result = await fetchData({url:shopApiUrl + id,methoud:"get"})
-            if(result){
-                setItemData(result as itemsData)
+            try {
+                const result = await fetchData({url:apiUrl +`legos/info?name=legos&id=${id}`,
+                    methoud:"get"})
+                if(result){
+                    const rowsData = (result as {[key:string]:itemsData[]}).rows
+                    setItemData(rowsData[0] as itemsData)
+                }
+            } catch (error) {
+                console.log(error)
             }
         }
     }
@@ -141,9 +129,10 @@ function ShopDetail(){
         <>
             <Box sx={centerCss}>
                 {<Breakcrumb sx={{width:"100%",margin:"auto",padding:"30px 0 30px 0"}}/>}
+                {itemData&&<>
                 <Box sx={{display:"flex",flexDirection:{xs:"column",sm:"column",md:"row"},gap:"15px",width:"100%"}}>
-                    <Box sx={{flex:1}}>
-                        <PictureShowCase sx={{width:"100%",maxHeight:"500px",gap:"5px"}} pictures={itemData.image.map((img)=>apiUrl + img)}/>
+                    <Box sx={{flex:1,display:"flex",justifyContent:"center"}}>
+                        <PictureShowCase sx={{width:"100%",maxHeight:"500px",gap:"5px"}} pictures={itemData.image_uploaded_png.map((img)=>apiUrl +"storage/"+ img)}/>
                     </Box>
                     <Box sx={{flex:1,display:"flex",flexDirection:"column", gap:"10px",padding:"0 15px 0 15px"}}>
                         <Typography sx={{fontSize: {md:"26px",lg:"28px"},lineHeight: {md:"31.2px",lg:"33.6px"}}}>{itemData.name}</Typography>
@@ -152,7 +141,7 @@ function ShopDetail(){
                             <Typography sx={{textDecoration:"line-through",color: "rgba(211, 211, 211, 0.55)",fontSize: "20px",lineHeight: "20px"}}>${itemData.price}</Typography>
                             <Box className={CS.salePill}>- {itemData.sale*100}%</Box>
                         </Box>
-                        <Box sx={{
+                        {itemData.timesale&&<Box sx={{
                             display: "inline-block",
                             padding: {xs:"8px 15px",sm:"16px 30px"},
                             border: "1px solid #B22222",
@@ -160,8 +149,8 @@ function ShopDetail(){
                             textAlign: "center",
                             minWidth: {xs:"100px",sm:"300px"}}}>
                             <Typography>HURRY UP! SALE ENDS IN:</Typography>
-                            <CountDown timer={"10/29/2024"}/>
-                        </Box>
+                            <CountDown timer={itemData.timesale}/>
+                        </Box>}
                         <Box>
                             <Typography>Quantity</Typography>
                             <Box display={"flex"} flexDirection={"row"} alignItems={"center"} justifyContent={"space-between"} flexGrow={0} sx={{borderRadius:"5px",width: "127px",backgroundColor: "rgba(38, 38, 38,0.5)"}}>
@@ -211,11 +200,32 @@ function ShopDetail(){
                     <Box sx={{padding:"35px 0 35px 0"}}>
                         {/* description tab */}
                         <TabContent value={tab} index={0}>
-                            {itemData.description}
+                            {itemData.description&&Parser(getHtml(itemData.description))}
                         </TabContent>
                         {/* Additional Information tab */}
                         <TabContent value={tab} index={1}>
-                            {itemData.info.age}
+                        <TableContainer component={Box}>
+                            <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+                                <TableHead>
+                                <TableRow>
+                                    <TableCell align="center">Age</TableCell>
+                                    <TableCell align="center">Serial Number</TableCell>
+                                    <TableCell align="center">Total pieces</TableCell>
+                                    <TableCell align="center">Category</TableCell>
+                                </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    <TableRow
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    >
+                                    <TableCell align="center">{itemData.age}</TableCell>
+                                    <TableCell align="center">{itemData.serial}</TableCell>
+                                    <TableCell align="center">{itemData.pieces}</TableCell>
+                                    <TableCell align="center">{itemData.category}</TableCell>
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
+                            </TableContainer>
                         </TabContent>
                         {/* review tab */}
                         <TabContent value={tab} index={2}>
@@ -263,7 +273,7 @@ function ShopDetail(){
                             </Stack>
                         </TabContent>
                     </Box>
-                </Box>
+                </Box></>}
             </Box>
         </>
     )

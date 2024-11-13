@@ -1,3 +1,4 @@
+// @ts-nocheck
 import * as React from 'react';
 import MuiAvatar from '@mui/material/Avatar';
 import MuiListItemAvatar from '@mui/material/ListItemAvatar';

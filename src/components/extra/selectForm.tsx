@@ -5,11 +5,11 @@ import upperCaseFirstLetter from "../../assets/module/upperCaseFirstletter"
 interface propsType{
     sx?:SxProps,
     name:string,
-    value?:unknown[],
-    default?:unknown
+    value?:unknown,
+    selectValue?:unknown[],
 }
 export default function SelectForm (props:propsType){
-    const [value,setValue] = useState<unknown>(props.default||"")
+    const [value,setValue] = useState<unknown>(props.value||"")
     return(
         <>
         <FormControl>
@@ -18,6 +18,7 @@ export default function SelectForm (props:propsType){
                 labelId={`${props.name}-label`}
                 id={props.name}
                 value={value}
+                name={props.name}
                 onChange={(e)=>setValue(e.target.value as unknown)}
                 autoWidth
                 label="Age"
@@ -25,7 +26,7 @@ export default function SelectForm (props:propsType){
                 <MenuItem value="">
                     <em>None</em>
                 </MenuItem>
-                {props.value&&props.value.map((v)=><MenuItem key={v as string} value={v as string}>{v as string}</MenuItem>)}
+                {props.selectValue&&props.selectValue.map((v)=><MenuItem key={v as string} value={v as string}>{v as string}</MenuItem>)}
             </Select>
         </FormControl>
         </>

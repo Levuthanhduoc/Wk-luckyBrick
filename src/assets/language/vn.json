@@ -36,7 +36,9 @@
         "search":"Tìm kiếm",
         "price":"Giá",
         "availability":"Tình trạng",
-        "theme":"Chủ đề"
+        "theme":"Chủ đề",
+        "tutorialBanner": "Khám Phá Thế Giới LEGO",
+        "tutorialSubBanner": "Làm Theo Các Hướng Dẫn Dễ Dàng Của Chúng Tôi!"
     },
     "form":{
         "emailInput":"Nhập email của bạn",

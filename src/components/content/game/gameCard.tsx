@@ -5,12 +5,16 @@ import { useState } from "react"
 
 import CS from '../../../assets/css/component.module.css'
 import { useNavigate } from "react-router-dom"
+import { JSONContent } from "@tiptap/core"
+import { getHtml } from "../../extra/richTextForm"
+import Parser from 'html-react-parser';
 
 interface props{
     sx?:SxProps,
     picture:string,
     name:string,
     id:string,
+    description?:JSONContent
 }
 function GameCard (props:props){
     const [hover,setHover] = useState(false)
@@ -49,7 +53,7 @@ function GameCard (props:props){
                         opacity:`${hover?1:0}`
                     }} >
                         <Box sx={{backgroundColor:"#262626",display:"grid",placeItems:"center"}}>GameInfo</Box>
-                        <Box sx={{fontSize:"0.8em"}}>Some info</Box>
+                        <Box sx={{fontSize:"0.8em"}}>{props.description?Parser(getHtml(props.description)):""}</Box>
                     </Box>
                 </Box>
             </RgbWaper>

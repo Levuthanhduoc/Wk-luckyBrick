@@ -1,7 +1,6 @@
 import { Box, Button, Grid2, IconButton, Pagination, Popover, Stack } from "@mui/material";
 import GameCard from "./gameCard";
-import placeHolder3 from '../../../assets/image/placeholder/placeHolder3.jpg'
-import { useEffect, useRef, useState } from "react";
+import {useEffect, useRef, useState } from "react";
 
 import CS from '../../../assets/css/component.module.css'
 import { Gamepad, Search, SportsEsports } from "@mui/icons-material";
@@ -11,43 +10,29 @@ import farm from '../../../assets/image/placeholder/Normal_HeartlakeFarm.jpg'
 import race from '../../../assets/image/placeholder/Racetrack_splash.png'
 import space from '../../../assets/image/placeholder/planet-hopper.png'
 import fetchData from "../../../assets/module/fecthData";
+import { JSONContent } from "@tiptap/core";
 
-const gameApiUrl = import.meta.env.VITE_GAME_API
 const apiUrl = import.meta.env.VITE_API_URL
-console.log(apiUrl)
 interface defaultData{
-    name:string,
-    picture:string,
-    id:number
+    gametitle:string,
+    image_uploaded_png:string,
+    id:number,
+    description:JSONContent,
 }
 
 
 function WebGame(){
-    const data = [
-        {id:0,name:"testGame1",picture:placeHolder3},
-        {id:1,name:"testGame2",picture:placeHolder3},
-        {id:2,name:"testGame3",picture:placeHolder3},
-        {id:3,name:"testGame4",picture:placeHolder3},
-        {id:4,name:"testGame5",picture:placeHolder3},
-        {id:5,name:"testGame6",picture:placeHolder3},
-        {id:6,name:"testGame7",picture:placeHolder3},
-        {id:7,name:"testGame8",picture:placeHolder3},
-        {id:8,name:"testGame9",picture:placeHolder3},
-        {id:9,name:"testGame10",picture:placeHolder3},
-        {id:10,name:"testGame11",picture:placeHolder3},
-        {id:11,name:"testGame12",picture:placeHolder3},
-        {id:12,name:"testGame13",picture:placeHolder3},
-    ]
     const trendingData = [
-        {name:"farm",picture:farm},
-        {name:"space",picture:space},
-        {name:"race",picture:race}
+        {gametitle:"farm",image_uploaded_png:farm},
+        {gametitle:"space",image_uploaded_png:space},
+        {gametitle:"race",image_uploaded_png:race}
     ]
     const [page,setPage] = useState(1)
     const [gameBar,setgameBar] = useState(false)
     const [currentCatalog,setCurrentCatalog] = useState("popular")
     const [isSearch,setSearch] = useState(false)
-    const [itemData,setItemData] = useState(data)
+    const [itemData,setItemData] = useState<defaultData[]|null>()
+    const originData = useRef<defaultData[]>()
     const [trendData,_setTrendData] = useState(trendingData)
     const searchB = useRef(null)
     const [bannerSelect,setBannerSelect] = useState(1)
@@ -58,17 +43,24 @@ function WebGame(){
 
     const getData = async ()=>{ 
         if(apiUrl){
-            const result = await fetchData({url:gameApiUrl,methoud:"get"})
-            if(result){
-                setItemData(result as defaultData[])
+            try{
+                const result = await fetchData({url:apiUrl +`legos/info?name=games`,
+                    methoud:"get"})
+                if(result){
+                    const rowsData = (result as {[key:string]:unknown}).rows
+                    setItemData(rowsData as defaultData[])
+                    originData.current = rowsData as defaultData[]
+                }
+            }catch(error){
+                console.log(error)
             }
         }
     }
 
     const gamebarItems = [
-        {id:"popular",name:"Popular",},
-        {id:"explore",name:"Explore"},
-        {id:"new",name:"New"}
+        {id:"popular",gametitle:"Popular",},
+        {id:"explore",gametitle:"Explore"},
+        {id:"new",gametitle:"New"}
     ]
 
     const rePos =(condition:boolean):object=>{
@@ -88,7 +80,7 @@ function WebGame(){
         }
     }
     const onSearch = (defaultData:defaultData[],query:string,section:string)=>{
-        const filtered = defaultData.filter((item)=>item[section as "name"].toLowerCase().includes(query.toLowerCase()))
+        const filtered = defaultData.filter((item)=>item[section as "gametitle"].toLowerCase().includes(query.toLowerCase()))
         setPage(1)
         if(query == ""){
             setItemData(defaultData)
@@ -129,7 +121,7 @@ function WebGame(){
                                 <Button  sx={{...selected,fontWeight:"bold"}} onClick={()=>{
                                     setCurrentCatalog(item.id)
                                 }}>
-                                    {item.name}
+                                    {item.gametitle}
                                 </Button>
                             </Box>
                             })}
@@ -148,7 +140,7 @@ function WebGame(){
                             }}
                             >
                             <Box sx={{padding:"5px"}}>
-                                <SearchBar onSearch={(query:string)=>onSearch(data,query,"name")}/>
+                                <SearchBar onSearch={(query:string)=>onSearch(originData.current||[],query,"gametitle")}/>
                             </Box>
                         </Popover>
                     </Box>
@@ -179,7 +171,7 @@ function WebGame(){
                         }else if(index < bannerSelect + 1){
                             bannerPos = "-100%"
                         }
-                        return<Box key={item.name} sx={{
+                        return<Box key={item.gametitle} sx={{
                             height:"100%",borderRadius:"20px",overflow:"hidden",
                             opacity:`${show}`,transform:`translateX(${bannerPos})`,
                             zIndex:`${show}`,display:`${display}`,
@@ -191,28 +183,33 @@ function WebGame(){
                                     setBannerSelect(index)
                                 }
                             }}>
-                            <img className={CS.shopCardImage} src={item.picture}></img>
+                            <img className={CS.shopCardImage} src={item.image_uploaded_png}></img>
                             <Box width={"100%"} height={"100%"} position={"absolute"} top={"0"} left={"0"} display={"grid"} justifyContent={"center"} alignContent={"center"}>
                                 <IconButton><SportsEsports/></IconButton>
                             </Box>
                         </Box>
                     })}
                 </Box>
-                <Box sx={{...centerCss,display:"flex",flexDirection:"column",gap:"50px"}}>
+                {itemData&&<Box sx={{...centerCss,display:"flex",flexDirection:"column",gap:"50px"}}>
                     <Grid2 container spacing={2} columns={{sm:2,md:2,lg:3,xl:4}}>
                         {itemData.map((item,index)=>{
                             if(index >= (page-1)*12&&index<page*12){
-                                return<Grid2 key={item.name} size={1}>
-                                        <GameCard sx={{minWidth:"200px",maxWidth:"500px",height:"auto"}} id={`${item.id }`} name={item.name} picture={apiUrl + item.picture}/>
+                                return<Grid2 key={item.gametitle} size={1}>
+                                        <GameCard sx={{minWidth:"200px",maxWidth:"500px",height:"auto"}} 
+                                            id={`${item.id }`} 
+                                            name={item.gametitle} 
+                                            picture={apiUrl + "storage/" + item.image_uploaded_png}
+                                            description={item.description}
+                                        />
                                     </Grid2>
                                 }
                             }
                         )}
                     </Grid2>
                     <Box sx={{display:"flex",justifyContent:"center"}}>
-                        <Pagination count={Math.ceil(data.length/12)} page={page} onChange={(_e,value)=>setPage(value)} shape="rounded" />
+                        <Pagination count={Math.ceil(itemData.length/12)} page={page} onChange={(_e,value)=>setPage(value)} shape="rounded" />
                     </Box>
-                </Box>
+                </Box>}
             </Box>
         </>
     )

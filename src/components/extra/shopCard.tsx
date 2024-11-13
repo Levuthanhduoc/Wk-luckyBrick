@@ -1,11 +1,13 @@
 import { Box,IconButton,Slide,Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import CS from '../../assets/css/component.module.css'
 import { FavoriteBorderOutlined, RemoveRedEyeOutlined, ShoppingBagOutlined} from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import moneyConvert from "../../assets/module/moneyConvert";
 import { useNavigate } from "react-router-dom";
+import { Context } from "../base/ContextWarper";
+import { contextInterface } from "../../AppTyscript";
 
 type componentProps = {
     id:string,
@@ -21,14 +23,10 @@ function ShopBox(props:componentProps){
     const [hover,setHover] = useState(false)
     const [hoverImage,setHoverImage] = useState(false)
     const [countDown,setCountDown] = useState<string|number|undefined>("start")
+    const {cart,setCart} = useContext(Context) as contextInterface
     const navigation = useNavigate()
 
-    const buttonCard = [
-        {name:"add to cart",icon:<ShoppingBagOutlined/>,time:600},
-        {name:"favorite",icon:<FavoriteBorderOutlined/>,time:700},
-        {name:"show more",icon:<RemoveRedEyeOutlined/>,time:800}
-    ]
-
+    
     const calCountDown = (time:string|number)=>{
         const endTime = new Date(time).getTime()
         const currentTime = new Date().getTime()
@@ -45,6 +43,37 @@ function ShopBox(props:componentProps){
         }
     }
 
+    const AddToCart =()=>{
+        if(cart){
+            let quantity = 1
+            const oldCart =[...cart]
+            let newCart = []
+            let isMacth = false
+            let index = 0
+            for(let i of oldCart){
+                if(i.id == props.id){
+                    quantity = Number(i.quantity) + 1
+                    oldCart[index].quantity = `${quantity}`
+                    isMacth = true
+                }
+                index = index +1
+            }
+            if(isMacth){
+                newCart = oldCart
+            }else{
+                newCart = [...cart,{
+                    "id":props.id,
+                    "name":props.name,
+                    "quantity":`${quantity}`,
+                    "price":`${props.price}`,
+                    "sale":`${(props.sale||0)/100}`
+                }]
+            }
+            console.log(newCart)
+            setCart(newCart)
+        }
+    }
+
     useEffect(()=>{
         const timerSale = setInterval(()=>{
             if(countDown && props.timer && !hoverImage){
@@ -56,9 +85,14 @@ function ShopBox(props:componentProps){
         return ()=>{
             clearInterval(timerSale)
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
-
+    const buttonCard = [
+        {name:"add to cart",icon:<ShoppingBagOutlined/>,onClick:AddToCart,time:600},
+        {name:"favorite",icon:<FavoriteBorderOutlined/>,onClick:()=>{},time:700},
+        {name:"show more",icon:<RemoveRedEyeOutlined/>,onClick:()=>{},time:800}
+    ]
+    
     return (
         <> 
             <Box className = {`${CS.shopCard}`} sx={props.sx?props.sx:{width:"360px"}} 
@@ -85,7 +119,7 @@ function ShopBox(props:componentProps){
                                 {buttonCard.map((item)=>{ 
                                     return(                        
                                         <Slide key={item.name} direction="up" in={hoverImage} timeout={item.time} mountOnEnter unmountOnExit>
-                                            <IconButton>{item.icon}</IconButton>
+                                            <IconButton onClick={()=>item.onClick()}>{item.icon}</IconButton>
                                         </Slide>
                                     )
                                 })}                                                      

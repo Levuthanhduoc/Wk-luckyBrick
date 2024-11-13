@@ -15,8 +15,8 @@ interface defaultData{
     id:number
     name:string,
     serial:string,
-    picture:string,
-    content:string[],
+    image_uploaded_png:string,
+    tutorialfile_uploaded_pdf:string[],
 }
 
 const centerCss = {
@@ -24,7 +24,6 @@ const centerCss = {
     padding:{xs:"25px 0 0 0",sm:"45px 15px 70px 15px",md:"45px 30px 70px 30px",lg:"45px 50px 70px 50px"}, 
 }
 
-const tutorialApiUrl = import.meta.env.VITE_TUTORIAL_API
 const apiUrl = import.meta.env.VITE_API_URL
 
 const TabContent = (props:TabContentProps)=>{
@@ -50,19 +49,26 @@ function TutorialDetail(){
     // const tabItems = [
     //     {id:"tab-0",name:"Book 1"},
     //     {id:"tab-1",name:"Book 2"},
-    //     {id:"tab-2",name:"Book 3"},
+    //     {id:"tab-2",name:"Botutorialfile_uploaded_pdfok 3"},
     // ]
     const getData = async ()=>{ 
         if(apiUrl){
-            const result = await fetchData({url:tutorialApiUrl + id,methoud:"get"})
-            if(result){
-                setItemData(result as defaultData)
+            try {
+                const result = await fetchData({url:apiUrl +`legos/info?name=tutorials&id=${id}`,
+                    methoud:"get"})
+                if(result){
+                    const rowsData = (result as {[key:string]:defaultData[]}).rows
+                    setItemData(rowsData[0] as defaultData)
+                    console.log(rowsData[0].tutorialfile_uploaded_pdf)
+                }
+            } catch (error) {
+                console.log(error)
             }
         }
     }
     useEffect(()=>{
         getData()
-    })
+    },[])
 
     return (
         <>
@@ -70,13 +76,13 @@ function TutorialDetail(){
                 <Breakcrumb sx={{width:"100%",margin:"auto",padding:"30px 0 30px 0"}}/>
                 <Box sx={{border: "1px solid rgba(255, 255, 255, 0.12)",margin:"0 0 30px 0",padding:{xs:"0",sm:"0 35px 0 35px "},borderRadius:"5px"}}>
                     <Tabs value={tab} onChange={(_e:SyntheticEvent,value)=>settab(value)}  variant="scrollable" scrollButtons="auto" allowScrollButtonsMobile>
-                        {itemData&&itemData.content.map((_item,index)=><Tab sx={{fontWeight:"bold"}} key={index} label={`Book ${index +1}`} aria-controls= {`simple-tabpanel-${index}`} />)}
+                        {itemData&&itemData.tutorialfile_uploaded_pdf?.map((_item,index)=><Tab sx={{fontWeight:"bold"}} key={index} label={`Book ${index +1}`} aria-controls= {`simple-tabpanel-${index}`} />)}
                     </Tabs>
                     <Divider orientation="horizontal" flexItem />
                     <Box sx={{padding:"35px 0 35px 0"}}>
-                        {itemData&&itemData.content.map((item,index)=>
-                            <TabContent value={tab} index={index}>
-                                <iframe src={apiUrl+item} width={"100%"} height={"1000px"}></iframe>
+                        {itemData&&itemData.tutorialfile_uploaded_pdf?.map((item,index)=>
+                            <TabContent key={index}  value={tab} index={index}>
+                                <iframe src={apiUrl+"storage/"+item} width={"100%"} height={"600px"}></iframe>
                             </TabContent>
                         )}
                     </Box>
