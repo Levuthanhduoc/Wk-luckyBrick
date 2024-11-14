@@ -54,6 +54,7 @@ export default function UploadForm (props:propsType){
                 setNamePreview(fileNames)
             }
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
     return(
         <>

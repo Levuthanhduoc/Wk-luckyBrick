@@ -50,7 +50,7 @@ function ShopBox(props:componentProps){
             let newCart = []
             let isMacth = false
             let index = 0
-            for(let i of oldCart){
+            for(const i of oldCart){
                 if(i.id == props.id){
                     quantity = Number(i.quantity) + 1
                     oldCart[index].quantity = `${quantity}`
@@ -66,7 +66,7 @@ function ShopBox(props:componentProps){
                     "name":props.name,
                     "quantity":`${quantity}`,
                     "price":`${props.price}`,
-                    "sale":`${(props.sale||0)/100}`
+                    "sale":`${Number(props.sale||0)/100}`
                 }]
             }
             console.log(newCart)

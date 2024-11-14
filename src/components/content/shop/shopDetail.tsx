@@ -1,6 +1,6 @@
 import { Box, Button, Divider, Fade, FormControl, IconButton, MenuItem, Rating, Select, Stack, SxProps, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs, TextField, Typography } from "@mui/material"
 import Breakcrumb from "../../extra/breadcrumb"
-import { SyntheticEvent, useEffect, useState } from "react"
+import { SyntheticEvent, useContext, useEffect, useState } from "react"
 import PictureShowCase from "../../extra/pictureShowCase"
 import CountDown from "../../extra/countDownTimer"
 import CS from "../../../assets/css/component.module.css"
@@ -17,6 +17,9 @@ import fetchData from "../../../assets/module/fecthData"
 import { getHtml } from "../../extra/richTextForm"
 import { JSONContent } from "@tiptap/core"
 import Parser from 'html-react-parser';
+import AddToCart from "../../../assets/module/addtoCart"
+import { Context } from "../../base/ContextWarper"
+import { contextInterface } from "../../../AppTyscript"
 
 interface TabContentProps {
     children?: React.ReactNode,
@@ -65,6 +68,7 @@ function ShopDetail(){
     const [reviewScore,setReviewScore] = useState(0)
     const [selectSort,setSort] = useState<string>("relevant")
     const [isReviewOn,setReviewOn] = useState(false)
+    const contextItem = useContext(Context) as contextInterface
     const [itemData,setItemData] = useState<itemsData>()
 
     const paymentMethod = [
@@ -160,7 +164,14 @@ function ShopDetail(){
                             </Box>
                         </Box>
                         <Box>
-                            <Button sx={{backgroundColor:"black" ,color:"white"}}>
+                            <Button sx={{backgroundColor:"black" ,color:"white"}} 
+                                onClick={()=>AddToCart({
+                                    id:`${itemData.id}`,
+                                    name:itemData.name,
+                                    sale:`${itemData.sale}`,
+                                    price:`${itemData.price}`,
+                                    },contextItem
+                                )}>
                                 <Typography sx={{padding:"8px 8px 4px 8px"}}>Add to cart</Typography>
                                 <AddShoppingCart/>
                             </Button>
