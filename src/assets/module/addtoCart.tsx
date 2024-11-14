@@ -32,10 +32,10 @@ const AddToCart =(shopItem:shopItem,context:contextInterface)=>{
                 "name":shopItem.name,
                 "quantity":`${quantity}`,
                 "price":`${shopItem.price}`,
-                "sale":`${Number(shopItem.sale||0)/100}`
+                "sale":`${shopItem.sale||0}`
             }]
         }
-        console.log(newCart)
+        localStorage.setItem("shopCart",JSON.stringify(newCart))
         setCart(newCart)
     }
 }

@@ -29,7 +29,6 @@ async function fetchData(props:FetchData){
         result = itemdata.data as apiResponseInterface
     }else{
         result = false
-        console.log(res)
     }
     return result
 }

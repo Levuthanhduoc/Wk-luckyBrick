@@ -169,7 +169,7 @@ function ShopDetail(){
                                     id:`${itemData.id}`,
                                     name:itemData.name,
                                     sale:`${itemData.sale}`,
-                                    price:`${itemData.price}`,
+                                    price:`${(itemData.price)}`,
                                     },contextItem
                                 )}>
                                 <Typography sx={{padding:"8px 8px 4px 8px"}}>Add to cart</Typography>

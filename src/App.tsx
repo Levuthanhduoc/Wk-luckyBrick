@@ -2,8 +2,9 @@ import React, {Suspense, useState} from 'react'
 import './App.css'
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { CircularProgress, CssBaseline } from '@mui/material';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { HashRouter, Route, Routes } from 'react-router-dom';
 import { ContextWarper } from './components/base/ContextWarper';
+import getShopCart from './assets/module/getShopCart';
 
 const Base = React.lazy(()=>import('./components/base/base'))
 const AdminDashbroad = React.lazy(()=>import('./components/dashboard/Dashboard'))
@@ -14,7 +15,7 @@ interface cartType{
 function App() {
   const [snack,setSnack] = useState({isOpen:false,message:""})
   const [isLogin,setLogin] = useState(false)
-  const [cart,setCart] = useState<cartType[]>([])
+  const [cart,setCart] = useState<cartType[]>(getShopCart()||[])
   const theme = createTheme({
     components:{
       MuiCssBaseline:{
@@ -53,14 +54,14 @@ function App() {
       <ContextWarper value ={{snack,setSnack,isLogin,setLogin,cart,setCart}} >
         <ThemeProvider theme={theme}>
           <CssBaseline/>
-          <BrowserRouter>  
+          <HashRouter>  
           <Suspense fallback={<CircularProgress/>}>
             <Routes>
               <Route path={"/admin/*"} element={<AdminDashbroad/>}/>
               <Route path={"/*"} element={<Base/>}/>
             </Routes>                
           </Suspense>                
-          </BrowserRouter>
+          </HashRouter>
           <SnackNotification/>
         </ThemeProvider>    
       </ContextWarper>

@@ -220,7 +220,7 @@ function BaseHeader(){
                 </Button>
               </Link>
             ))}
-            {userInfo&&(userInfo["role"]=="admin"?<MuiLink href={"/admin"}>
+            {userInfo&&(userInfo["role"]=="admin"?<MuiLink href={"#admin"}>
               <Button sx={{color: `${location.pathname == "Admin"?"#007bff":'#fff'}`}}>
                 {t("Admin")}
               </Button>
