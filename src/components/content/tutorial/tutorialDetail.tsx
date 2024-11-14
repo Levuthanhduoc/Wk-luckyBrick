@@ -59,7 +59,6 @@ function TutorialDetail(){
                 if(result){
                     const rowsData = (result as {[key:string]:defaultData[]}).rows
                     setItemData(rowsData[0] as defaultData)
-                    console.log(rowsData[0].tutorialfile_uploaded_pdf)
                 }
             } catch (error) {
                 console.log(error)

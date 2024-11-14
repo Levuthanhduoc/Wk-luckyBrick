@@ -37,7 +37,6 @@ export default memo(function AddFrom(props:propsType){
         let messageText:string[] = [] 
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        console.log(data)
         try {
           let result
           if(props.update){
