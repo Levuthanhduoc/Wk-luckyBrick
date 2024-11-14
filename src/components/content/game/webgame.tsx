@@ -1,4 +1,4 @@
-import { Box, Button, Grid2, IconButton, Pagination, Popover, Stack } from "@mui/material";
+import { Box, Button, CircularProgress, Grid2, IconButton, Pagination, Popover, Stack } from "@mui/material";
 import GameCard from "./gameCard";
 import {useEffect, useRef, useState } from "react";
 
@@ -190,7 +190,7 @@ function WebGame(){
                         </Box>
                     })}
                 </Box>
-                {itemData&&<Box sx={{...centerCss,display:"flex",flexDirection:"column",gap:"50px"}}>
+                {itemData?<Box sx={{...centerCss,display:"flex",flexDirection:"column",gap:"50px"}}>
                     <Grid2 container spacing={2} columns={{sm:2,md:2,lg:3,xl:4}}>
                         {itemData.map((item,index)=>{
                             if(index >= (page-1)*12&&index<page*12){
@@ -209,7 +209,7 @@ function WebGame(){
                     <Box sx={{display:"flex",justifyContent:"center"}}>
                         <Pagination count={Math.ceil(itemData.length/12)} page={page} onChange={(_e,value)=>setPage(value)} shape="rounded" />
                     </Box>
-                </Box>}
+                </Box>:<Box sx={{display: 'flex',alignItems: 'center',justifyContent: 'center',}}><CircularProgress size="30px" /></Box>}
             </Box>
         </>
     )

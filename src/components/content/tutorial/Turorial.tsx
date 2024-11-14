@@ -1,4 +1,4 @@
-import { Box, Grid2, Pagination, Typography } from "@mui/material";
+import { Box, CircularProgress, Grid2, Pagination, Typography } from "@mui/material";
 import GuideCard from "./guideCard";
 import { useTranslation } from "react-i18next";
 import CutBar from "../../extra/cutBar";
@@ -75,7 +75,7 @@ function Tutorial(){
                     </Typography>
                     <Typography sx={{fontSize:"0.9em"}}>{t("common.tutorialSubBanner")}  </Typography>
                 </Box>
-            {itemData&&<Box sx={{...centerCss,display:"flex",flexDirection:"column",gap:"30px"}}>
+            {itemData?<Box sx={{...centerCss,display:"flex",flexDirection:"column",gap:"30px"}}>
                 <CutBar items={barItems} sx={{height:"40px",width:"100%"}} onSearch={(query:string)=>onSearch(originData.current||[],query,"name")}/>
                 <Grid2 container spacing={2} columns={{sm:2,md:2,lg:3,xl:4}}>
                     {itemData.map((item,index)=>{
@@ -90,7 +90,7 @@ function Tutorial(){
                 <Box sx={{display:"flex",justifyContent:"center"}}>
                     <Pagination count={Math.ceil(itemData.length/12)} page={page} onChange={(_e,value)=>setPage(value)} shape="rounded" />
                 </Box>
-            </Box>}
+            </Box>:<Box sx={{display: 'flex',alignItems: 'center',justifyContent: 'center',}}><CircularProgress size="30px" /></Box>}
         </>
     )
 }

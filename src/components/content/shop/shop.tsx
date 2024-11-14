@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, Backdrop, Box, Button, Fade, FormControl, Grid2,MenuItem, Pagination, Select,TextField, Typography} from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Backdrop, Box, Button, CircularProgress, Fade, FormControl, Grid2,MenuItem, Pagination, Select,TextField, Typography} from "@mui/material";
 import ShopBox from "../../extra/shopCard";
 import CS from '../../../assets/css/component.module.css'
 import {Close, Done, ExpandMore, FilterListOutlined} from "@mui/icons-material";
@@ -128,7 +128,7 @@ function Shop(){
                     </Typography>
                     <Typography sx={{fontSize:"0.9em"}}>{t("common.welcomeSubBanner")}  </Typography>
                 </Box>
-                {itemData&&<Box sx={{
+                {itemData?<Box sx={{
                     ...centerCss, 
                     display:"flex",flexDirection:"column",gap:"30px"}}
                     >
@@ -230,7 +230,7 @@ function Shop(){
                         <Box sx={{display:"flex",justifyContent:"center"}}>
                             <Pagination count={Math.ceil(itemData.length/12)} page={page} onChange={(_e,value)=>setPage(value)} shape="rounded" />
                         </Box>
-                    </Box>}
+                    </Box>:<Box sx={{display: 'flex',alignItems: 'center',justifyContent: 'center',}}><CircularProgress size="30px" /></Box>}
                 </Box>
         </>
     )
