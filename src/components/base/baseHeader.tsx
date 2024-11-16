@@ -16,7 +16,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import {Badge, Menu, Link as MuiLink} from '@mui/material';
 import {Avatar, FormControl, MenuItem, Select, 
-  // useColorScheme 
+  useColorScheme 
 } from '@mui/material';
 import {useTranslation} from 'react-i18next'
 import { Link,useLocation,useNavigate } from 'react-router-dom';
@@ -105,7 +105,7 @@ const ChangeAvatar = (props:{data:freeObject|null })=>{
 
 
 function BaseHeader(){
-  // const { mode, setMode } = useColorScheme();
+  const { mode, setMode } = useColorScheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [language,setLanguage] = useState("en")
   const navigate = useNavigate()
@@ -115,6 +115,10 @@ function BaseHeader(){
   const {isLogin,cart} = useContext(Context) as contextInterface
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
+  }
+
+  if(mode != "dark"){
+    setMode("dark")
   }
 
   // if (!mode) {
@@ -172,6 +176,12 @@ function BaseHeader(){
                 </ListItemButton>
             </ListItem>
         ))}
+        {userInfo&&(userInfo["role"]=="admin"?
+            <ListItem sx={{ textAlign: 'center',display:"flex",justifyContent:"center" }}  disablePadding>
+              <ListItemButton onClick={()=>navigate("admin")} sx={{ textAlign: 'center' }}>
+                <ListItemText primary={t("Admin")} />
+              </ListItemButton>
+            </ListItem>:"")}
         <ListItem sx={{ textAlign: 'center',display:"flex",justifyContent:"center" }}  disablePadding>
                 <LanguageSelect/>
             </ListItem>

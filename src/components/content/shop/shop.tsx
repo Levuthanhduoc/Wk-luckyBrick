@@ -45,7 +45,7 @@ function Shop(){
     
     const centerCss = {
         maxWidth:"1540px",width:"100%",margin:"auto",
-        padding:{sm:"45px 15px 70px 15px",md:"45px 30px 70px 30px",lg:"45px 50px 70px 50px"}, 
+        padding:{xs:"50px 15px 70px 15px",sm:"45px 15px 70px 15px",md:"45px 30px 70px 30px",lg:"45px 50px 70px 50px"}, 
     }
     const sortOption = [
         {name:"common.featuredSort",value:"featured"},
@@ -128,95 +128,95 @@ function Shop(){
                     </Typography>
                     <Typography sx={{fontSize:"0.9em"}}>{t("common.welcomeSubBanner")}  </Typography>
                 </Box>
+                <Box className = {filterPos?CS.fixedBox:""} sx={filterPos?{padding:{xs:"70px 20px 0 20px" ,sm:"70px 40px 0 40px",md:"70px 50px 0 50px"}}:{}}>
+                    <Box sx={filterPos?{...centerCss,padding:{sm:"0 15px 0 15px",md:"0 30px 0 30px",lg:"0 50px 0 50px"}, }:{}}>
+                        {/* filter bar start */}
+                        <Box sx={{display:"flex",justifyContent:"space-between",alignItems:"center",position:"relative"}}>
+                            <Backdrop open={backdrop} sx={(theme) => ({ zIndex: theme.zIndex.drawer + 1 })} 
+                                        onClick={(e)=>{
+                                e.stopPropagation()
+                                setBackDrop(false)}}>
+                            </Backdrop>
+                            <Box sx={{backdropFilter:"blur(10px)",width:"100%",height:"100%",position:"absolute"}}></Box>
+                            <Box className={"filterBox"} sx={{position:"relative"}}>
+                                <Button variant="contained" onClick={()=>setBackDrop(true)} endIcon={<FilterListOutlined/>}>
+                                    {t("common.filter")}
+                                </Button>
+                                {backdrop&&<Fade in={true}>
+                                        <Box sx={theme=>({
+                                                width:{xs:"335px",sm:"500px"},
+                                                height:"500px",
+                                                borderRadius:"5px",overflow:"auto",
+                                                position:"absolute",
+                                                zIndex: theme.zIndex.drawer + 1,
+                                                top:0
+                                            })}
+                                            onClick={(e)=>{e.stopPropagation()}}
+                                            >
+                                            <Box sx={{
+                                                display:"flex",flexDirection:"row",justifyContent:"space-between",alignItems:"center",
+                                                height:"50px",padding:"10px",backgroundColor:"rgb(25, 118, 210)",
+                                                position:"sticky",
+                                                width:"100%",
+                                                zIndex:1,
+                                                top:0,
+                                            }}>
+                                                <Box sx={{display:"flex",flexDirection:"row", gap:"5px"}}>
+                                                    <Typography>{t("common.filter").toUpperCase()}</Typography>
+                                                    <FilterListOutlined/>
+                                                </Box>
+                                                <Box>
+                                                    <Done sx={{cursor:"pointer" ,marginRight:"18px"}} />
+                                                    <Close sx={{cursor:"pointer"}} onClick={()=>setBackDrop(false)} />
+                                                </Box>
+                                            </Box>
+                                            <Box sx={{width:"99,9%"}}>
+                                                {filterOption.map((item)=>
+                                                    <Accordion key={item.name} style={{margin:"0"}} defaultExpanded>
+                                                        <AccordionSummary
+                                                        expandIcon={<ExpandMore />}
+                                                        aria-controls="filter-content"
+                                                        id="filterPrice"
+                                                        >
+                                                            {t(item.name)}
+                                                        </AccordionSummary>
+                                                        <AccordionDetails sx={{margin:"0 16px 0 16px"}}>
+                                                            {item.format}
+                                                        </AccordionDetails>
+                                                    </Accordion>
+                                                )}
+                                            </Box>
+                                        </Box>
+                                    </Fade>}
+                            </Box>
+                            <FormControl>
+                                <TextField
+                                    sx={{width:{xs:"100px",sm:"20vw"}}}
+                                    onChange={(e)=>{
+                                        setSearchQuery(e.target.value)
+                                        onSearch(originData.current||[],e.target.value,"name")
+                                    }}
+                                    value={searchQuery}
+                                    id="searchBar"
+                                    className="text"
+                                    label={t("common.search")}
+                                    variant="outlined"
+                                    size="small"
+                                />
+                            </FormControl>
+                            <FormControl size="small">
+                                <Select sx={{padding:"0"}} value={selectSort} onChange={(e)=>{setSelectSort(e.target.value)}} id={"sortOption"}>
+                                    {sortOption.map((item)=><MenuItem key={item.name} value={item.value}>{t(item.name)}</MenuItem>)}
+                                </Select>
+                            </FormControl>
+                        </Box>
+                        {/* end filter bar */}
+                    </Box>
+                </Box>
                 {itemData?<Box sx={{
                     ...centerCss, 
-                    display:"flex",flexDirection:"column",gap:"30px"}}
+                    display:"flex",flexDirection:"column",gap:"30px",justifyContent:"center",alignItems:"center"}}
                     >
-                        <Box className = {filterPos?CS.fixedBox:""} sx={filterPos?{padding:{xs:"70px 20px 0 20px" ,sm:"70px 40px 0 40px",md:"70px 50px 0 50px"}}:{}}>
-                            <Box sx={filterPos?{...centerCss,padding:{sm:"0 15px 0 15px",md:"0 30px 0 30px",lg:"0 50px 0 50px"}, }:{}}>
-                                {/* filter bar start */}
-                                <Box sx={{display:"flex",justifyContent:"space-between",alignItems:"center",position:"relative"}}>
-                                    <Backdrop open={backdrop} sx={(theme) => ({ zIndex: theme.zIndex.drawer + 1 })} 
-                                                onClick={(e)=>{
-                                        e.stopPropagation()
-                                        setBackDrop(false)}}>
-                                    </Backdrop>
-                                    <Box sx={{backdropFilter:"blur(10px)",width:"100%",height:"100%",position:"absolute"}}></Box>
-                                    <Box className={"filterBox"} sx={{position:"relative"}}>
-                                        <Button variant="contained" onClick={()=>setBackDrop(true)} endIcon={<FilterListOutlined/>}>
-                                            {t("common.filter")}
-                                        </Button>
-                                        {backdrop&&<Fade in={true}>
-                                                <Box sx={theme=>({
-                                                        width:{xs:"335px",sm:"500px"},
-                                                        height:"500px",
-                                                        borderRadius:"5px",overflow:"auto",
-                                                        position:"absolute",
-                                                        zIndex: theme.zIndex.drawer + 1,
-                                                        top:0
-                                                    })}
-                                                    onClick={(e)=>{e.stopPropagation()}}
-                                                    >
-                                                    <Box sx={{
-                                                        display:"flex",flexDirection:"row",justifyContent:"space-between",alignItems:"center",
-                                                        height:"50px",padding:"10px",backgroundColor:"rgb(25, 118, 210)",
-                                                        position:"sticky",
-                                                        width:"100%",
-                                                        zIndex:1,
-                                                        top:0,
-                                                    }}>
-                                                        <Box sx={{display:"flex",flexDirection:"row", gap:"5px"}}>
-                                                            <Typography>{t("common.filter").toUpperCase()}</Typography>
-                                                            <FilterListOutlined/>
-                                                        </Box>
-                                                        <Box>
-                                                            <Done sx={{cursor:"pointer" ,marginRight:"18px"}} />
-                                                            <Close sx={{cursor:"pointer"}} onClick={()=>setBackDrop(false)} />
-                                                        </Box>
-                                                    </Box>
-                                                    <Box sx={{width:"99,9%"}}>
-                                                        {filterOption.map((item)=>
-                                                            <Accordion key={item.name} style={{margin:"0"}} defaultExpanded>
-                                                                <AccordionSummary
-                                                                expandIcon={<ExpandMore />}
-                                                                aria-controls="filter-content"
-                                                                id="filterPrice"
-                                                                >
-                                                                    {t(item.name)}
-                                                                </AccordionSummary>
-                                                                <AccordionDetails sx={{margin:"0 16px 0 16px"}}>
-                                                                    {item.format}
-                                                                </AccordionDetails>
-                                                            </Accordion>
-                                                        )}
-                                                    </Box>
-                                                </Box>
-                                            </Fade>}
-                                    </Box>
-                                    <FormControl>
-                                        <TextField
-                                            sx={{width:{xs:"100px",sm:"20vw"}}}
-                                            onChange={(e)=>{
-                                                setSearchQuery(e.target.value)
-                                                onSearch(originData.current||[],e.target.value,"name")
-                                            }}
-                                            value={searchQuery}
-                                            id="searchBar"
-                                            className="text"
-                                            label={t("common.search")}
-                                            variant="outlined"
-                                            size="small"
-                                        />
-                                    </FormControl>
-                                    <FormControl size="small">
-                                        <Select sx={{padding:"0"}} value={selectSort} onChange={(e)=>{setSelectSort(e.target.value)}} id={"sortOption"}>
-                                            {sortOption.map((item)=><MenuItem key={item.name} value={item.value}>{t(item.name)}</MenuItem>)}
-                                        </Select>
-                                    </FormControl>
-                                </Box>
-                                {/* end filter bar */}
-                            </Box>
-                        </Box>
                         <Grid2 container spacing={2} columns={{sm:2,md:2,lg:3,xl:4}}>
                             {itemData&&itemData.map((item,index)=>{
                                     if(index >= (page-1)*12&&index<page*12){

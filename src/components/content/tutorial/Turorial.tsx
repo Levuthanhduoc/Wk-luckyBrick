@@ -65,6 +65,7 @@ function Tutorial(){
                     display:"flex",flexDirection:"column",
                     justifyContent:"center",alignItems:"center",
                     height:"200px",
+                    margin:{xs:"40px 0px 0px 0px",sm:"25px 0px 0px 0px",md:"15px 0px 0px 0px"}
                 }}>
                     <Typography sx={{
                         textAlign:"center",
@@ -75,7 +76,7 @@ function Tutorial(){
                     </Typography>
                     <Typography sx={{fontSize:"0.9em"}}>{t("common.tutorialSubBanner")}  </Typography>
                 </Box>
-            {itemData?<Box sx={{...centerCss,display:"flex",flexDirection:"column",gap:"30px"}}>
+            {itemData?<Box sx={{...centerCss,display:"flex",flexDirection:"column",gap:"30px",justifyContent:"center",alignItems:"center"}}>
                 <CutBar items={barItems} sx={{height:"40px",width:"100%"}} onSearch={(query:string)=>onSearch(originData.current||[],query,"name")}/>
                 <Grid2 container spacing={2} columns={{sm:2,md:2,lg:3,xl:4}}>
                     {itemData.map((item,index)=>{
