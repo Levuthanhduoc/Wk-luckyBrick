@@ -6,6 +6,7 @@ import fetchData from "../../../assets/module/fecthData"
 import { useParams } from "react-router-dom"
 import { JSONContent } from "@tiptap/core"
 import { getHtml } from "../../extra/richTextForm"
+import Parser from 'html-react-parser';
 
 const centerCss = {
     maxWidth:"1540px",width:"100%",margin:"auto",
@@ -29,11 +30,12 @@ function GameDetail(){
     const getData = async ()=>{ 
         if(apiUrl){
             try{
-                const result = await fetchData({url:apiUrl +`legos/info?name=games&${id}`,
+                const result = await fetchData({url:apiUrl +`legos/info?name=games&id=${id}`,
                     methoud:"get"})
                 if(result){
                     const rowsData = (result as {[key:string]:unknown[]}).rows
                     setItemData(rowsData[0] as defaultData)
+                    console.log(rowsData)
                 }
             }catch(error){
                 console.log(error)
@@ -61,7 +63,7 @@ function GameDetail(){
 
                 <Box>
                     <Typography>Description</Typography>
-                    {itemdata?.description?getHtml(itemdata.description):""}
+                    {itemdata?.description?Parser(getHtml(itemdata.description)):""}
                 </Box>
             </Box>
         </>

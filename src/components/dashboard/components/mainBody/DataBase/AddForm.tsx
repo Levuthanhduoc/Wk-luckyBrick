@@ -37,7 +37,6 @@ export default memo(function AddFrom(props:propsType){
         let messageText:string[] = [] 
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        console.log(data)
         try {
           let result
           if(props.update){
@@ -57,7 +56,7 @@ export default memo(function AddFrom(props:propsType){
             const resData = await result.json() as apiResponseInterface
             if (resData.status) {
               setSnack({isOpen:true,message:resData.data.message[0]})
-              props.onSubmit?props.onSubmit():""
+              if(props.onSubmit){props.onSubmit()}
             } else {
               messageText = [...messageText, ...resData.data.message]
             }
@@ -95,7 +94,7 @@ export default memo(function AddFrom(props:propsType){
           if(rowFetch.ok){
             const rowData = await rowFetch.json() as apiResponseInterface
             if(rowData.status){
-              newRowsValue = rowData.data.rows as {} 
+              newRowsValue = rowData.data.rows as {[key:string]:unknown} 
             }else{
               throw new Error(rowData.data.message[0]);
               
