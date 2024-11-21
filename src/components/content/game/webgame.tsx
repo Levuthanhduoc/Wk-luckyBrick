@@ -38,7 +38,7 @@ function WebGame(){
     const [bannerSelect,setBannerSelect] = useState(1)
     const centerCss = {
         maxWidth:"1540px",width:"100%",margin:"auto",
-        padding:{sm:"45px 15px 70px 15px",md:"45px 30px 70px 30px",lg:"45px 50px 70px 50px"}, 
+        padding:{xs:"45px 5px 70px 5px",sm:"45px 15px 70px 15px",md:"45px 30px 70px 30px",lg:"45px 50px 70px 50px"}, 
     }
 
     const getData = async ()=>{ 
@@ -67,7 +67,7 @@ function WebGame(){
         if(condition){
             return {padding:{xs:`55px 5px 10px 5px`,sm:`65px 5px 5px 5px`,md:`64px 25px 5px 25px`}}
         }else{
-            return {padding:{xs:`38px 5px 20px 5px`,sm:`38px 5px 20px 5px`,md:`15px 25px 20px 25px`}}
+            return {padding:{xs:`60px 5px 20px 5px`,sm:`38px 5px 20px 5px`,md:`15px 25px 20px 25px`}}
         }
     }
 
@@ -173,6 +173,7 @@ function WebGame(){
                         }
                         return<Box key={item.gametitle} sx={{
                             height:"100%",borderRadius:"20px",overflow:"hidden",
+                            width:{sx:"90%"},
                             opacity:`${show}`,transform:`translateX(${bannerPos})`,
                             zIndex:`${show}`,display:`${display}`,
                             transition:"1s transform ease-in-out",position:"absolute"
@@ -184,13 +185,14 @@ function WebGame(){
                                 }
                             }}>
                             <img className={CS.shopCardImage} src={item.image_uploaded_png}></img>
-                            <Box width={"100%"} height={"100%"} position={"absolute"} top={"0"} left={"0"} display={"grid"} justifyContent={"center"} alignContent={"center"}>
+                            <Box width={"100%"} height={"100%"} position={"absolute"} top={"0"} left={"0"} display={"grid"} 
+                                justifyContent={"center"} alignContent={"center"}>
                                 <IconButton><SportsEsports/></IconButton>
                             </Box>
                         </Box>
                     })}
                 </Box>
-                {itemData?<Box sx={{...centerCss,display:"flex",flexDirection:"column",gap:"50px"}}>
+                {itemData?<Box sx={{...centerCss,display:"flex",flexDirection:"column",gap:"50px",justifyContent:"center",alignItems:"center"}}>
                     <Grid2 container spacing={2} columns={{sm:2,md:2,lg:3,xl:4}}>
                         {itemData.map((item,index)=>{
                             if(index >= (page-1)*12&&index<page*12){
