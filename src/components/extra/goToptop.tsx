@@ -18,7 +18,7 @@ function GoTop(){
     },[])
     return(
         <>
-            {show&&<IconButton sx={{position:"fixed",zIndex:1000,bottom:"5%",right:"5%",background: " #0056B3"}} onClick={()=>window.scrollTo({top:0,behavior:"smooth"})}>
+            {show&&<IconButton sx={{position:"fixed",zIndex:1000,bottom:"70px",right:"10px",background: " #0056B3"}} onClick={()=>window.scrollTo({top:0,behavior:"smooth"})}>
                 <KeyboardDoubleArrowUp/>
             </IconButton>}
         </>

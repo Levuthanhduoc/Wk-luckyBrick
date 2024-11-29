@@ -17,6 +17,7 @@ function Tutorial(){
     const {t} = useTranslation()
     const [page,setPage] = useState(1)
     const [itemData,setItemData] = useState<defaultData[]>()
+    const [barOn,setBarOn] = useState(false)
     const originData = useRef<defaultData[]>()
     const centerCss = {
         maxWidth:"1540px",width:"100%",margin:"auto",
@@ -44,19 +45,32 @@ function Tutorial(){
             }
         }
     }
-
-    const onSearch = (defaultData:defaultData[],query:string,section:string)=>{
-        const filtered = defaultData.filter((item)=>item[section as "name"].toLowerCase().includes(query.toLowerCase()))
-        setPage(1)
-        if(query == ""){
-            setItemData(defaultData)
+    const onScroll = ()=>{
+        const nowPos = window.scrollY
+        if(nowPos > 200){
+            setBarOn(true)
         }else{
-            setItemData(filtered)
+            setBarOn(false)
         }
     }
 
+    const switchBarOn = () =>{
+        if(barOn){
+            return {
+                position:"fixed",
+                left:0,
+                top:{xs:0,md:"70px"},
+                zIndex:1000}
+        }
+        return {}
+    }
+
     useEffect(()=>{
+        document.addEventListener("scroll",onScroll)
         getData()
+        return()=>{
+            document.removeEventListener("scroll",onScroll)
+        }
     },[])
     return (
         <>
@@ -65,7 +79,7 @@ function Tutorial(){
                     display:"flex",flexDirection:"column",
                     justifyContent:"center",alignItems:"center",
                     height:"200px",
-                    margin:{xs:"40px 0px 0px 0px",sm:"25px 0px 0px 0px",md:"15px 0px 0px 0px"}
+                    margin:{xs:"0px 0px 0px 0px",sm:"25px 0px 0px 0px",md:"15px 0px 0px 0px"}
                 }}>
                     <Typography sx={{
                         textAlign:"center",
@@ -76,9 +90,9 @@ function Tutorial(){
                     </Typography>
                     <Typography sx={{fontSize:"0.9em"}}>{t("common.tutorialSubBanner")}  </Typography>
                 </Box>
-            {itemData?<Box sx={{...centerCss,display:"flex",flexDirection:"column",gap:"30px",justifyContent:"center",alignItems:"center"}}>
-                <CutBar items={barItems} sx={{height:"40px",width:"100%"}} onSearch={(query:string)=>onSearch(originData.current||[],query,"name")}/>
-                <Grid2 container spacing={2} columns={{sm:2,md:2,lg:3,xl:4}}>
+            {itemData?<Box sx={{...centerCss,display:"flex",position:"relative",flexDirection:"column",gap:"30px"}}>
+                <CutBar items={barItems} sx={{...switchBarOn(),height:"50px",width:"100%"}}/>
+                <Grid2 container spacing={2} columns={{sm:2,md:2,lg:3,xl:4}} sx={{width:"100%",justifyContent:"center",alignItems:"center"}}>
                     {itemData.map((item,index)=>{
                             if(index >= (page-1)*12&&index<page*12){
                                 return<Grid2 key={item.name} size={1}>

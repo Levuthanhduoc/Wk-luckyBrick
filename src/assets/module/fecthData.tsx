@@ -2,6 +2,7 @@ import { apiResponseInterface } from "../../AppTyscript"
 
 interface Option{
     cookies?:boolean,
+    JsonData?:string
 }
 
 interface FetchData{
@@ -18,6 +19,12 @@ async function fetchData(props:FetchData){
         if(props.option.cookies){
             addon = {...addon,
                 credentials:"include"
+            }
+        }
+        if(props.option.JsonData){
+            addon = {...addon,
+                body: props.option.JsonData,
+                headers: { 'Content-Type': 'application/json' },
             }
         }
     }

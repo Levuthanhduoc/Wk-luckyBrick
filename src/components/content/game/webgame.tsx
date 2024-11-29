@@ -65,9 +65,9 @@ function WebGame(){
 
     const rePos =(condition:boolean):object=>{
         if(condition){
-            return {padding:{xs:`55px 5px 10px 5px`,sm:`65px 5px 5px 5px`,md:`64px 25px 5px 25px`}}
+            return {padding:{xs:`0px 5px 10px 5px`,sm:`0px 5px 5px 5px`,md:`64px 25px 5px 25px`}}
         }else{
-            return {padding:{xs:`60px 5px 20px 5px`,sm:`38px 5px 20px 5px`,md:`15px 25px 20px 25px`}}
+            return {padding:{xs:`5px 5px 20px 5px`,sm:`5px 5px 20px 5px`,md:`15px 25px 20px 25px`}}
         }
     }
 
@@ -140,7 +140,7 @@ function WebGame(){
                             }}
                             >
                             <Box sx={{padding:"5px"}}>
-                                <SearchBar onSearch={(query:string)=>onSearch(originData.current||[],query,"gametitle")}/>
+                                <SearchBar sx={{maxWidth:"100%"}} onSearch={(query:string)=>onSearch(originData.current||[],query,"gametitle")}/>
                             </Box>
                         </Popover>
                     </Box>
@@ -192,8 +192,8 @@ function WebGame(){
                         </Box>
                     })}
                 </Box>
-                {itemData?<Box sx={{...centerCss,display:"flex",flexDirection:"column",gap:"50px",justifyContent:"center",alignItems:"center"}}>
-                    <Grid2 container spacing={2} columns={{sm:2,md:2,lg:3,xl:4}}>
+                {itemData?<Box sx={{...centerCss,display:"flex",flexDirection:"column",gap:"50px"}}>
+                    <Grid2 container spacing={2} columns={{sm:2,md:2,lg:3,xl:4}} sx={{width:"100%",justifyContent:"center",alignItems:"center"}}>
                         {itemData.map((item,index)=>{
                             if(index >= (page-1)*12&&index<page*12){
                                 return<Grid2 key={item.gametitle} size={1}>

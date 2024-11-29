@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, Backdrop, Box, Button, CircularProgress, Fade, FormControl, Grid2,MenuItem, Pagination, Select,TextField, Typography} from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Backdrop, Box, Button, CircularProgress, Fade, FormControl, Grid2,MenuItem, Pagination, Select,Typography} from "@mui/material";
 import ShopBox from "../../extra/shopCard";
 import CS from '../../../assets/css/component.module.css'
 import {Close, Done, ExpandMore, FilterListOutlined} from "@mui/icons-material";
@@ -33,7 +33,6 @@ function Shop(){
     ]
     const [filterPos,setFilterPos]= useState(false)
     const [selectSort,setSelectSort] = useState("featured")
-    const [searchQuery,setSearchQuery] = useState("")
     const [page,setPage] = useState(1)
     const [backdrop,setBackDrop] = useState(false)
     const [priceRange,setPriceRange] = useState<number|number[]>([25,300])
@@ -65,15 +64,6 @@ function Shop(){
         {name:"common.price",format:<Moneyslider priceRange={priceRange as number[]} setPriceRange={setPriceRange} min={25} max={300} />},
         {name:"common.theme",format:<ThemeChecker items={theme} setItems={setTheme}/>},
     ]
-    const onSearch = (data:itemData[],query:string,section:string)=>{
-        const filtered = data.filter((item)=>item[section as "name"].toLowerCase().includes(query.toLowerCase()))
-        setPage(1)
-        if(query == ""){
-            setItemData(data)
-        }else{
-            setItemData(filtered)
-        }
-    }
 
     const onScoll = ()=>{ 
         const posNow = window.scrollY;
@@ -128,7 +118,7 @@ function Shop(){
                     </Typography>
                     <Typography sx={{fontSize:"0.9em"}}>{t("common.welcomeSubBanner")}  </Typography>
                 </Box>
-                <Box className = {filterPos?CS.fixedBox:""} sx={filterPos?{padding:{xs:"70px 20px 0 20px" ,sm:"70px 40px 0 40px",md:"70px 50px 0 50px"}}:{}}>
+                <Box className = {filterPos?CS.fixedBox:""} sx={filterPos?{padding:{xs:"0px 20px 0 20px" ,sm:"0px 40px 0 40px",md:"70px 50px 0 50px"}}:{}}>
                     <Box sx={filterPos?{...centerCss,padding:{sm:"0 15px 0 15px",md:"0 30px 0 30px",lg:"0 50px 0 50px"}, }:{}}>
                         {/* filter bar start */}
                         <Box sx={{display:"flex",justifyContent:"space-between",alignItems:"center",position:"relative"}}>
@@ -189,21 +179,6 @@ function Shop(){
                                         </Box>
                                     </Fade>}
                             </Box>
-                            <FormControl>
-                                <TextField
-                                    sx={{width:{xs:"100px",sm:"20vw"}}}
-                                    onChange={(e)=>{
-                                        setSearchQuery(e.target.value)
-                                        onSearch(originData.current||[],e.target.value,"name")
-                                    }}
-                                    value={searchQuery}
-                                    id="searchBar"
-                                    className="text"
-                                    label={t("common.search")}
-                                    variant="outlined"
-                                    size="small"
-                                />
-                            </FormControl>
                             <FormControl size="small">
                                 <Select sx={{padding:"0"}} value={selectSort} onChange={(e)=>{setSelectSort(e.target.value)}} id={"sortOption"}>
                                     {sortOption.map((item)=><MenuItem key={item.name} value={item.value}>{t(item.name)}</MenuItem>)}
@@ -215,9 +190,9 @@ function Shop(){
                 </Box>
                 {itemData?<Box sx={{
                     ...centerCss, 
-                    display:"flex",flexDirection:"column",gap:"30px",justifyContent:"center",alignItems:"center"}}
+                    display:"flex",flexDirection:"column",gap:"30px"}}
                     >
-                        <Grid2 container spacing={2} columns={{sm:2,md:2,lg:3,xl:4}}>
+                        <Grid2 container spacing={2} columns={{sm:2,md:2,lg:3,xl:4}} sx={{width:"100%",justifyContent:"center",alignItems:"center"}}>
                             {itemData&&itemData.map((item,index)=>{
                                     if(index >= (page-1)*12&&index<page*12){
                                         return<Grid2 key={item.name} size={1}>

@@ -20,6 +20,7 @@ import Parser from 'html-react-parser';
 import AddToCart from "../../../assets/module/addtoCart"
 import { Context } from "../../base/ContextWarper"
 import { contextInterface } from "../../../AppTyscript"
+import isSale from "../../../assets/module/isSale"
 
 interface TabContentProps {
     children?: React.ReactNode,
@@ -125,7 +126,7 @@ function ShopDetail(){
     }
     useEffect(()=>{
         getData()
-    },[])
+    },[id])
     useEffect(()=>{
         setReviewScore(calculateAverageScore(reviewData.total,reviewData.detail,{reverse:false}))
     },[itemData])
@@ -136,16 +137,16 @@ function ShopDetail(){
                 {itemData&&<>
                 <Box sx={{display:"flex",flexDirection:{xs:"column",sm:"column",md:"row"},gap:"15px",width:"100%"}}>
                     <Box sx={{flex:1,display:"flex",justifyContent:"center"}}>
-                        <PictureShowCase sx={{width:"100%",maxHeight:"500px",gap:"5px"}} pictures={itemData.image_uploaded_png.map((img)=>apiUrl +"storage/"+ img)}/>
+                        <PictureShowCase sx={{width:"100%",height:"500px",gap:"5px"}} pictures={itemData.image_uploaded_png.map((img)=>apiUrl +"storage/"+ img)}/>
                     </Box>
                     <Box sx={{flex:1,display:"flex",flexDirection:"column", gap:"10px",padding:"0 15px 0 15px"}}>
                         <Typography sx={{fontSize: {md:"26px",lg:"28px"},lineHeight: {md:"31.2px",lg:"33.6px"}}}>{itemData.name}</Typography>
                         <Box display={"flex"} flexDirection={"row"} alignItems={"center"} gap={"15px"} sx={{fontSize: "20px",lineHeight: "20px"}}>
                             <Typography sx={{color:"#B22222", fontSize: "28px",lineHeight: "28px"}} >${itemData.price - (itemData.price*itemData.sale)}</Typography>
                             <Typography sx={{textDecoration:"line-through",color: "rgba(211, 211, 211, 0.55)",fontSize: "20px",lineHeight: "20px"}}>${itemData.price}</Typography>
-                            <Box className={CS.salePill}>- {itemData.sale*100}%</Box>
+                            {isSale(itemData.timesale)&&<Box className={CS.salePill}>- {itemData.sale*100}%</Box>}
                         </Box>
-                        {itemData.timesale&&<Box sx={{
+                        {isSale(itemData.timesale)&&<Box sx={{
                             display: "inline-block",
                             padding: {xs:"8px 15px",sm:"16px 30px"},
                             border: "1px solid #B22222",
@@ -169,7 +170,10 @@ function ShopDetail(){
                                     id:`${itemData.id}`,
                                     name:itemData.name,
                                     sale:`${itemData.sale}`,
+                                    quantity:`${quantity}`,
                                     price:`${(itemData.price)}`,
+                                    timesale:`${(itemData.timesale)}`,
+                                    picture:apiUrl+"storage/"+itemData.image_uploaded_png[0],
                                     },contextItem
                                 )}>
                                 <Typography sx={{padding:"8px 8px 4px 8px"}}>Add to cart</Typography>

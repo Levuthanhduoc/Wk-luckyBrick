@@ -23,7 +23,7 @@ function PictureShowCase(props:props){
     })
 
     const selectedStyle = {
-        border: " 3px solid black",
+        border: " 3px solid white",
         borderRadius:"15px"  
     }
 
@@ -93,7 +93,7 @@ function PictureShowCase(props:props){
                 >
                     {props.pictures.map((picture,index)=>{
                         return <Box key={index} sx={index == page?selectedStyle:{}} onClick={()=>onSelectPicture(index)}>
-                            <img style={{userSelect:"none"}} draggable={false} className={CS.shopCardImage} src={picture}></img>
+                            <img style={{userSelect:"none",objectFit:"contain"}} draggable={false} className={CS.shopCardImage} src={picture}></img>
                         </Box>
                     })}
                 </Box>
@@ -101,10 +101,11 @@ function PictureShowCase(props:props){
                     <IconButton sx={{position:"absolute",left:0,zIndex:"1"}} onClick={()=>onclickLeft()}>
                         <KeyboardArrowLeft/>
                     </IconButton>
-                    <Box sx={{display:"flex", flexDirection:"row",position:"absolute",transition:"1s ease-in-out",transform:`translateX(${position}%)`}}>
+                    <Box sx={{display:"flex", flexDirection:"row",position:"absolute",alignItems:"center",height:"100%",
+                        transition:"1s ease-in-out",transform:`translateX(${position}%)`}}>
                         {props.pictures.map((picture,index)=>{
-                                return <Box key={index} sx={{flexShrink:"0",width:"100%"}}>
-                                    <img className={CS.shopCardImage} src={picture}></img>
+                                return <Box key={index} sx={{flexShrink:"0",width:"100%",height:"100%"}}>
+                                    <img className={CS.shopCardImage} style={{objectFit:"contain"}} src={picture}></img>
                                 </Box>
                             })}
                     </Box>

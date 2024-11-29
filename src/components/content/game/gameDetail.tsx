@@ -35,7 +35,6 @@ function GameDetail(){
                 if(result){
                     const rowsData = (result as {[key:string]:unknown[]}).rows
                     setItemData(rowsData[0] as defaultData)
-                    console.log(rowsData)
                 }
             }catch(error){
                 console.log(error)

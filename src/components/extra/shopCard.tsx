@@ -1,4 +1,4 @@
-import { Box,IconButton,Slide,Typography } from "@mui/material";
+import { Box,IconButton,Slide,Stack,Typography } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 
 import CS from '../../assets/css/component.module.css'
@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { Context } from "../base/ContextWarper";
 import { contextInterface } from "../../AppTyscript";
 import AddToCart from "../../assets/module/addtoCart";
+import isSale from "../../assets/module/isSale";
 
 type componentProps = {
     id:string,
@@ -24,6 +25,7 @@ function ShopBox(props:componentProps){
     const [hover,setHover] = useState(false)
     const [hoverImage,setHoverImage] = useState(false)
     const [countDown,setCountDown] = useState<string|number|undefined>("start")
+    const [mobile,setMobile] = useState(false)
     const contextItem = useContext(Context) as contextInterface
     const navigation = useNavigate()
 
@@ -44,6 +46,15 @@ function ShopBox(props:componentProps){
         }
     }
 
+    const onChangeSize = ()=>{
+        const widthNow = window.innerWidth
+        if(widthNow < 1150){
+            setMobile(true)
+        }else{
+            setMobile(false)
+        }
+    }
+
     useEffect(()=>{
         const timerSale = setInterval(()=>{
             if(countDown && props.timer && !hoverImage){
@@ -52,8 +63,10 @@ function ShopBox(props:componentProps){
                 clearInterval(timerSale)
             }
         },1000)
+        window.addEventListener("resize",onChangeSize)
         return ()=>{
             clearInterval(timerSale)
+            window.removeEventListener("resize",onChangeSize)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
@@ -62,7 +75,9 @@ function ShopBox(props:componentProps){
             "id":props.id,
             "name":props.name,
             "price":`${props.price}`,
-            "sale":`${Number(props.sale||0)/100}`
+            "sale":`${Number(props.sale||0)/100}`,
+            "timesale":`${props.timer}`,
+            "picture":props.picture,
         },contextItem),time:600},
         {name:"favorite",icon:<FavoriteBorderOutlined/>,onClick:()=>{},time:700},
         {name:"show more",icon:<RemoveRedEyeOutlined/>,onClick:()=>{},time:800}
@@ -93,15 +108,15 @@ function ShopBox(props:componentProps){
                             <Box>
                                 {buttonCard.map((item)=>{ 
                                     return(                        
-                                        <Slide key={item.name} direction="up" in={hoverImage} timeout={item.time} mountOnEnter unmountOnExit>
+                                        <Slide key={item.name} direction="up" in={!mobile?hoverImage:true} timeout={item.time} mountOnEnter unmountOnExit>
                                             <IconButton onClick={item.onClick}>{item.icon}</IconButton>
                                         </Slide>
                                     )
                                 })}                                                      
                             </Box>
                         </Box>
-                        <Box sx={{position:"absolute",bottom:"0",overflow:"hidden", width:"100%",}}>
-                            {(countDown && countDown !="start")&&<Slide direction="up" in={!hoverImage} timeout={500} mountOnEnter unmountOnExit>
+                        <Box sx={{position:"absolute",overflow:"hidden", width:"100%",}} bottom={mobile?"":"0"}>
+                            {(countDown && countDown !="start")&&<Slide direction="up" in={!mobile?!hoverImage:true} timeout={500} mountOnEnter unmountOnExit>
                                     <Typography sx={{color:"#B22222",backgroundColor:"rgba(0,0,0,0.4)",textAlign:"center"}}>
                                         {countDown}
                                     </Typography>
@@ -113,7 +128,14 @@ function ShopBox(props:componentProps){
                     </Box>
                     <Box>
                         <Typography>{props.name}</Typography>
-                        <Typography sx={{fontWeight:"bolder"}}>{t("conversion.money",{value:moneyConvert(props.price,i18n.language)})}</Typography>
+                        <Stack direction={"row"} gap={"10px"}>
+                            {isSale(`${props.timer}`)&&<Typography sx={{color:"#B22222"}} >
+                                ${Number(props.price) - (Number(props.price)*Number((props.sale||100)/100))}
+                            </Typography>}
+                            <Typography sx={{textDecoration:"line-through",color: "rgba(211, 211, 211, 0.55)"}}>
+                                {t("conversion.money",{value:moneyConvert(props.price,i18n.language)})}
+                            </Typography>
+                        </Stack>
                     </Box>
                 </Box>
             </Box>

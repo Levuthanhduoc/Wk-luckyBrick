@@ -75,6 +75,21 @@
     cursor: pointer;
 }
 
+.click:hover{
+    cursor: pointer;
+    color: #E30019;
+}
+
+.cleanInput{
+    border: none;            
+    background: none;       
+    outline: none;           
+    font-size: 16px;         
+    color: inherit;          
+    padding: 0;              
+    width: auto;
+}
+
 .rotatingElement {
     animation: rotate360 2s linear infinite;
 }

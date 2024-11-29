@@ -8,7 +8,7 @@ function BaseContent (){
     return(
         <>
             <Box className ="app-content" component="main" >
-                <Box sx={{padding:{xs:"5px" ,sm:"40px",md:"50px"}}}>
+                <Box sx={{padding:{xs:"0px 5px 5px 5px",md:"50px"}}}>
                     <Suspense fallback={<SkeletonExtra/>}>
                         <Routes>
                             {allPath.map((item)=>{

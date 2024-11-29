@@ -130,6 +130,7 @@ function BaseFooter(){
                             {paymentMethod.map((item)=><img key={item.name} style={{width:"48px",height:"30px"}} alt={item.name} src={item.icon}/>)}
                         </Box>
                     </Box>
+                    <Box className="padBox" sx={{height:{xs:"59px",sm:"0"}}}></Box>
                 </Box>
             </Box>
         </>

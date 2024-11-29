@@ -5,7 +5,9 @@ interface shopItem {
     name:string,
     quantity?:string,
     price:string,
-    sale:string
+    sale:string,
+    timesale:string,
+    picture:string,
 }
 
 const AddToCart =(shopItem:shopItem,context:contextInterface)=>{
@@ -18,7 +20,7 @@ const AddToCart =(shopItem:shopItem,context:contextInterface)=>{
         let index = 0
         for(const i of oldCart){
             if(i.id == shopItem.id){
-                quantity = Number(i.quantity) + 1
+                quantity = Number(i.quantity) + 1 + Number(shopItem.quantity||"0")
                 oldCart[index].quantity = `${quantity}`
                 isMacth = true
             }
@@ -32,7 +34,9 @@ const AddToCart =(shopItem:shopItem,context:contextInterface)=>{
                 "name":shopItem.name,
                 "quantity":`${quantity}`,
                 "price":`${shopItem.price}`,
-                "sale":`${shopItem.sale||0}`
+                "sale":`${shopItem.sale||0}`,
+                "timesale":`${shopItem.timesale}`,
+                "picture":shopItem.picture,
             }]
         }
         localStorage.setItem("shopCart",JSON.stringify(newCart))
