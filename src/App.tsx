@@ -16,7 +16,19 @@ function App() {
   const [snack,setSnack] = useState({isOpen:false,message:""})
   const [isLogin,setLogin] = useState(false)
   const [cart,setCart] = useState<cartType[]>(getShopCart()||[])
+  const [fastviewOpen,setFastViewOpen] = useState({isOpen:false,itemId:"",onClose:()=>{}})
+
+  const appValues ={
+    snack,setSnack,
+    isLogin,setLogin,
+    cart,setCart,
+    fastviewOpen,setFastViewOpen
+  }
+
   const theme = createTheme({
+    typography: {
+      fontFamily: 'Montserrat, Arial, sans-serif',
+    },
     components:{
       MuiCssBaseline:{
         styleOverrides:{
@@ -51,7 +63,7 @@ function App() {
   
   return (
     <>
-      <ContextWarper value ={{snack,setSnack,isLogin,setLogin,cart,setCart}} >
+      <ContextWarper value ={{...appValues}} >
         <ThemeProvider theme={theme}>
           <CssBaseline/>
           <HashRouter>  

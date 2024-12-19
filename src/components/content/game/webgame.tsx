@@ -1,11 +1,9 @@
-import { Box, Button, CircularProgress, Grid2, IconButton, Pagination, Popover, Stack } from "@mui/material";
+import { Box, Button, CircularProgress, Grid2, IconButton, Pagination, Stack } from "@mui/material";
 import GameCard from "./gameCard";
 import {useEffect, useRef, useState } from "react";
 
 import CS from '../../../assets/css/component.module.css'
-import { Gamepad, Search, SportsEsports } from "@mui/icons-material";
-import SearchBar from "../../extra/searchBar";
-
+import { Gamepad, HelpCenter, SportsEsports } from "@mui/icons-material";
 import farm from '../../../assets/image/placeholder/Normal_HeartlakeFarm.jpg'
 import race from '../../../assets/image/placeholder/Racetrack_splash.png'
 import space from '../../../assets/image/placeholder/planet-hopper.png'
@@ -30,7 +28,7 @@ function WebGame(){
     const [page,setPage] = useState(1)
     const [gameBar,setgameBar] = useState(false)
     const [currentCatalog,setCurrentCatalog] = useState("popular")
-    const [isSearch,setSearch] = useState(false)
+    // const [isSearch,setSearch] = useState(false)
     const [itemData,setItemData] = useState<defaultData[]|null>()
     const originData = useRef<defaultData[]>()
     const [trendData,_setTrendData] = useState(trendingData)
@@ -79,15 +77,6 @@ function WebGame(){
             setgameBar(false)
         }
     }
-    const onSearch = (defaultData:defaultData[],query:string,section:string)=>{
-        const filtered = defaultData.filter((item)=>item[section as "gametitle"].toLowerCase().includes(query.toLowerCase()))
-        setPage(1)
-        if(query == ""){
-            setItemData(defaultData)
-        }else{
-            setItemData(filtered)
-        }
-    }
 
     useEffect(()=>{
         document.addEventListener("scroll",onScroll)
@@ -126,23 +115,9 @@ function WebGame(){
                             </Box>
                             })}
                         </Stack>
-                        <IconButton ref={searchB} id="searchButton" onClick={()=>setSearch(true)}>
-                            <Search/>
+                        <IconButton ref={searchB} id="searchButton">
+                            <HelpCenter/>
                         </IconButton>
-                        <Popover
-                            id="searchButton"
-                            open={isSearch}
-                            anchorEl={searchB.current}
-                            onClose={()=>setSearch(false)}
-                            anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'left',
-                            }}
-                            >
-                            <Box sx={{padding:"5px"}}>
-                                <SearchBar sx={{maxWidth:"100%"}} onSearch={(query:string)=>onSearch(originData.current||[],query,"gametitle")}/>
-                            </Box>
-                        </Popover>
                     </Box>
                 </Box>
                 <Box sx={{

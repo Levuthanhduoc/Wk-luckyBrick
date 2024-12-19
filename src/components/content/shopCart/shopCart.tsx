@@ -2,7 +2,7 @@ import { Box, Button,Divider, IconButton, Stack, Step, StepConnector, stepConnec
 import { ChangeEvent, FormEvent, useContext, useState } from "react";
 import { Context } from "../../base/ContextWarper";
 import { cartType, contextInterface } from "../../../AppTyscript";
-import { Add, CreditCard,DeleteOutline, DoneAll, LocalShipping, Person, Remove, ShoppingCartCheckout,} from "@mui/icons-material";
+import { Add, CheckCircle, CreditCard,DeleteOutline, DoneAll, LocalShipping, Person, Remove, ShoppingCartCheckout,} from "@mui/icons-material";
 import {v4 as uuid4} from 'uuid'
 import isSale from "../../../assets/module/isSale";
 import CS from "../../../assets/css/component.module.css"
@@ -111,6 +111,9 @@ export default function ShopCart (props:propsType){
     }
     const onClickStep = (stepNumber:number)=>{
         if(stepNumber < payStep){
+            if(payStep <= 2){
+                setAdditionalValue(null)
+            }
             setPayStep(stepNumber)
         }
     }
@@ -118,7 +121,12 @@ export default function ShopCart (props:propsType){
     const onSubmit = (e:FormEvent<HTMLFormElement>) =>{
         e.preventDefault()
         const formData = new FormData(e.currentTarget)
-        setPayStep(payStep + 1)
+        if(payStep < steps.length - 1){
+            setPayStep(payStep + 1)
+        }
+        if(payStep == 1){
+            setAdditionalValue({shipping:"0",tax:"0.2"})
+        }
         console.log(formData)
     }
 
@@ -159,6 +167,7 @@ export default function ShopCart (props:propsType){
             }
             newCart.push(newItem)
         }
+        localStorage.setItem("shopCart",JSON.stringify(newCart))
         setCart(newCart)
     }
     
@@ -174,15 +183,15 @@ export default function ShopCart (props:propsType){
         return(
             <Stack key={cartItem.id} direction={"row"} alignItems={"center"} gap={{xs:"5px",sm:"50px"}}>
                 <Box width={"100px"}>
-                    <Box sx={{height:{xs:"50px",sm:"90px"},objectFit:"contain",}} component={"img"} src={cartItem.picture}/>
+                    <Box sx={{height:{xs:"50px",sm:"90px"},maxWidth:"140px",objectFit:"contain",}} component={"img"} src={cartItem.picture}/>
                 </Box>
                 <Stack minHeight={"70px"} direction={"column"} justifyContent={"space-between"} alignItems={"stretch"} height={"100%"} flex={1}>
                     <Typography sx={{wordBreak:"break-word"}}>{cartItem.name}</Typography>
                     <Box>
-                        {isSale(cartItem.timesale)&&<Typography sx={{color:"#B22222"}} >
+                        {<Typography sx={{color:"#B22222"}} >
                             ${Number(cartItem.price) - (Number(cartItem.price)*Number(cartItem.sale))}
                         </Typography>}
-                        <Typography sx={{textDecoration:"line-through",color: "rgba(211, 211, 211, 0.55)"}}>${cartItem.price}</Typography>
+                        {isSale(cartItem.timesale)&&<Typography sx={{textDecoration:"line-through",color: "rgba(211, 211, 211, 0.55)"}}>${cartItem.price}</Typography>}
                     </Box>
                     {payStep!=0&&<Typography>Quantity: {cartItem.quantity}</Typography>}
                 </Stack>
@@ -230,6 +239,7 @@ export default function ShopCart (props:propsType){
                         <PaymentForm onSubmit={onSubmit}/>
                     </Box>}
                     {payStep == 3&&<Box flex={{sm:1,md:2}} display={"flex"} flexDirection={"column"} justifyContent={"center"} alignItems={"center"}>
+                        <CheckCircle sx={{ fontSize: 50 }}/>
                         <Typography>All Done</Typography>
                         <Typography>Thank you for choosing us</Typography>
                     </Box>}
@@ -262,9 +272,9 @@ export default function ShopCart (props:propsType){
                             <Stack direction={"row"} justifyContent={"space-between"}>
                                 <Typography fontWeight={700}>Order Total:</Typography>
                                 <Typography>
-                                    ${cart.reduce((total,current)=>total + totalMoney(current),0) 
+                                    ${(cart.reduce((total,current)=>total + totalMoney(current),0) 
                                     + Number(additionalValue?.shipping||"0") 
-                                    + Number(additionalValue?.tax||"0")}
+                                    + Number(additionalValue?.tax||"0")).toFixed(2)}
                                 </Typography>
                             </Stack>
                             {payStep==0&&<Stack justifyContent={"center"} alignItems={"center"}>

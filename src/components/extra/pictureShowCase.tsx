@@ -6,6 +6,8 @@ import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material"
 
 interface props{
     pictures:string[]
+    simple?:boolean,
+    onClick?:(e:MouseEvent<HTMLDivElement>)=>void
     sx?:SxProps
 }
 
@@ -15,6 +17,7 @@ function PictureShowCase(props:props){
     const [isMouseDown,setmouseDown] = useState(false)
     const [movePosistion,setMovePosistion] = useState(0)
     const dragableRef = useRef<HTMLElement>()
+
     const mouseCoord = useRef({
         startX:0,
         startY:0,
@@ -24,7 +27,8 @@ function PictureShowCase(props:props){
 
     const selectedStyle = {
         border: " 3px solid white",
-        borderRadius:"15px"  
+        borderRadius:"15px",
+        backgroundColor: "rgba(38, 38, 38,0.5)"  
     }
 
     const onclickLeft = ()=>{
@@ -87,20 +91,20 @@ function PictureShowCase(props:props){
     
     return (
         <>
-            <Box display={"flex"} flexDirection={{sx:"column",sm:"row"}} sx={props.sx||{height:"600px",width:"550px"}}>
-                <Box ref={dragableRef} sx={{display:"flex",flex:1,backgroundColor: "rgba(38, 38, 38,0.5)", flexDirection:"column",width:"100%" ,overflowY:"scroll",scrollbarWidth:"none"}}
+            <Box display={"flex"} flexDirection={{sx:"column",sm:"row"}} sx={props.sx||{height:"600px",width:"550px"}} onClick={props.onClick}>
+                {!props.simple&&<Box ref={dragableRef} sx={{display:"flex",flex:1, flexDirection:"column",gap:"5px",width:"100%" ,overflowY:"scroll",scrollbarWidth:"none"}}
                     onMouseDown={(e)=>onMouseDown(e)} onMouseUp={onMouseUp} onMouseMove={(e)=>onMouseMove(e)} onMouseLeave={()=>{onMouseUp()}}
                 >
                     {props.pictures.map((picture,index)=>{
-                        return <Box key={index} sx={index == page?selectedStyle:{}} onClick={()=>onSelectPicture(index)}>
+                        return <Box key={index} sx={index == page?selectedStyle:{backgroundColor: "rgba(38, 38, 38,0.5)"}} onClick={()=>onSelectPicture(index)}>
                             <img style={{userSelect:"none",objectFit:"contain"}} draggable={false} className={CS.shopCardImage} src={picture}></img>
                         </Box>
                     })}
-                </Box>
+                </Box>}
                 <Box sx={{flex:3,position:"relative",overflow:"hidden",display:"flex",alignItems:"center",backgroundColor: "rgba(38, 38, 38,0.5)"}}>
-                    <IconButton sx={{position:"absolute",left:0,zIndex:"1"}} onClick={()=>onclickLeft()}>
-                        <KeyboardArrowLeft/>
-                    </IconButton>
+                    {(position <0)&&<IconButton sx={{position:"absolute",left:0,zIndex:"1"}} onClick={()=>onclickLeft()}>
+                        <KeyboardArrowLeft sx={{ fontSize: 40 }}/>
+                    </IconButton>}
                     <Box sx={{display:"flex", flexDirection:"row",position:"absolute",alignItems:"center",height:"100%",
                         transition:"1s ease-in-out",transform:`translateX(${position}%)`}}>
                         {props.pictures.map((picture,index)=>{
@@ -109,9 +113,9 @@ function PictureShowCase(props:props){
                                 </Box>
                             })}
                     </Box>
-                    <IconButton sx={{position:"absolute",right:0,zIndex:"1"}} onClick={()=>onclickRight()}>
-                        <KeyboardArrowRight/>
-                    </IconButton>
+                    {(position > (props.pictures.length - 1)  * -100)&&<IconButton sx={{position:"absolute",right:0,zIndex:"1"}} onClick={()=>onclickRight()}>
+                        <KeyboardArrowRight sx={{ fontSize: 40 }}/>
+                    </IconButton>}
                 </Box>
             </Box>
         </>

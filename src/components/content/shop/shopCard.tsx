@@ -1,15 +1,15 @@
-import { Box,IconButton,Slide,Stack,Typography } from "@mui/material";
+import { Box,IconButton,Slide,Stack,SxProps,Typography } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 
-import CS from '../../assets/css/component.module.css'
+import CS from '../../../assets/css/component.module.css'
 import { FavoriteBorderOutlined, RemoveRedEyeOutlined, ShoppingBagOutlined} from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
-import moneyConvert from "../../assets/module/moneyConvert";
+import moneyConvert from "../../../assets/module/moneyConvert";
 import { useNavigate } from "react-router-dom";
-import { Context } from "../base/ContextWarper";
-import { contextInterface } from "../../AppTyscript";
-import AddToCart from "../../assets/module/addtoCart";
-import isSale from "../../assets/module/isSale";
+import { Context } from "../../base/ContextWarper";
+import { contextInterface } from "../../../AppTyscript";
+import AddToCart from "../../../assets/module/addtoCart";
+import isSale from "../../../assets/module/isSale";
 
 type componentProps = {
     id:string,
@@ -18,7 +18,7 @@ type componentProps = {
     picture:string,
     sale?:number|undefined,
     timer?:string|number|undefined,
-    sx?:object,
+    sx?:SxProps,
 }
 function ShopBox(props:componentProps){
     const {t,i18n}= useTranslation()
@@ -28,6 +28,7 @@ function ShopBox(props:componentProps){
     const [mobile,setMobile] = useState(false)
     const contextItem = useContext(Context) as contextInterface
     const navigation = useNavigate()
+    const isCurrentSale = isSale(`${props.timer}`)
 
     
     const calCountDown = (time:string|number)=>{
@@ -71,21 +72,28 @@ function ShopBox(props:componentProps){
         // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
     const buttonCard = [
-        {name:"add to cart",icon:<ShoppingBagOutlined/>,onClick:()=>AddToCart({
-            "id":props.id,
-            "name":props.name,
-            "price":`${props.price}`,
-            "sale":`${Number(props.sale||0)/100}`,
-            "timesale":`${props.timer}`,
-            "picture":props.picture,
-        },contextItem),time:600},
+        {name:"add to cart",icon:<ShoppingBagOutlined/>,onClick:()=>{
+            AddToCart({
+                "id":props.id,
+                "name":props.name,
+                "price":`${props.price}`,
+                "sale":`${Number(props.sale||0)/100}`,
+                "timesale":`${props.timer}`,
+                "picture":props.picture,
+            },contextItem)
+        },time:600},
         {name:"favorite",icon:<FavoriteBorderOutlined/>,onClick:()=>{},time:700},
-        {name:"show more",icon:<RemoveRedEyeOutlined/>,onClick:()=>{},time:800}
+        {name:"show more",icon:<RemoveRedEyeOutlined/>,onClick:()=>{
+            contextItem.setFastViewOpen({
+                isOpen:true,
+                itemId:props.id,
+            })}
+            ,time:800}
     ]
     
     return (
         <> 
-            <Box className = {`${CS.shopCard}`} sx={props.sx?props.sx:{width:"360px"}} 
+            <Box className = {`${CS.shopCard}`} sx={props.sx?props.sx:{height:"400px"}} 
                 onMouseOver={()=>{setHover(true);setHoverImage(true)}} 
                 onMouseOut={()=>{setHover(false);setHoverImage(false)}}>
                 <Box className = {`${CS.borderGaming} ${hover&&CS.borderGamingHover}`}></Box>
@@ -97,14 +105,20 @@ function ShopBox(props:componentProps){
                         <span className={CS.dot}/>
                     </Box>
                     <Box sx={{display:"flex",justifyContent:"center",backgroundColor:"#262626",borderRadius:"5px",position:"relative"}}>
-                        <img onClick={()=>{navigation(props.id)}} className={CS.shopCardImage} src={props.picture}/>
+                        <Box sx={{height:"250px",flex:1}}>
+                            <img onClick={()=>{
+                                    navigation(props.id)
+                                }} 
+                                className={CS.shopCardImage} src={props.picture}
+                            />
+                        </Box>
                         <Box sx={{
                             position:"absolute",
                             overflow:"hidden",
-                            width:"100%",height:"15%",
+                            width:"100%",height:"20%",
                             bottom:"0" ,
                             display:"flex",flexDirection:"column",alignItems:"center"
-                        }}>    
+                        }}>  
                             <Box>
                                 {buttonCard.map((item)=>{ 
                                     return(                        
@@ -116,25 +130,25 @@ function ShopBox(props:componentProps){
                             </Box>
                         </Box>
                         <Box sx={{position:"absolute",overflow:"hidden", width:"100%",}} bottom={mobile?"":"0"}>
-                            {(countDown && countDown !="start")&&<Slide direction="up" in={!mobile?!hoverImage:true} timeout={500} mountOnEnter unmountOnExit>
+                            {isCurrentSale&&<Slide direction="up" in={!mobile?!hoverImage:true} timeout={500} mountOnEnter unmountOnExit>
                                     <Typography sx={{color:"#B22222",backgroundColor:"rgba(0,0,0,0.4)",textAlign:"center"}}>
                                         {countDown}
                                     </Typography>
                             </Slide>}
                         </Box>
-                        {(props.sale&&countDown)&&<Box sx={{position:"absolute",top:"10px",right:"10px"}} className={CS.salePill}>
+                        {isCurrentSale&&<Box sx={{position:"absolute",top:"10px",right:"10px"}} className={CS.salePill}>
                             {`- ${props.sale}%`}
                         </Box>}
                     </Box>
                     <Box>
                         <Typography>{props.name}</Typography>
                         <Stack direction={"row"} gap={"10px"}>
-                            {isSale(`${props.timer}`)&&<Typography sx={{color:"#B22222"}} >
-                                ${Number(props.price) - (Number(props.price)*Number((props.sale||100)/100))}
-                            </Typography>}
-                            <Typography sx={{textDecoration:"line-through",color: "rgba(211, 211, 211, 0.55)"}}>
-                                {t("conversion.money",{value:moneyConvert(props.price,i18n.language)})}
+                            <Typography sx={{color:"#B22222"}} >
+                                ${Number(props.price) - (Number(props.price)*Number((props.sale||0)/100))}
                             </Typography>
+                            {isCurrentSale&&<Typography sx={{textDecoration:"line-through",color: "rgba(211, 211, 211, 0.55)"}}>
+                                {t("conversion.money",{value:moneyConvert(props.price,i18n.language)})}
+                            </Typography>}
                         </Stack>
                     </Box>
                 </Box>

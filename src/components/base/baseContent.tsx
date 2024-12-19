@@ -1,10 +1,14 @@
 import { Box} from "@mui/material";
-import { Suspense } from "react";
+import { Suspense, useContext } from "react";
 import {Route, Routes } from "react-router-dom";
 import SkeletonExtra from "../extra/seletonEX";
 
 import allPath from "../../_nav";
+import FastView from "../content/shop/fastview";
+import { Context } from "./ContextWarper";
+import { contextInterface } from "../../AppTyscript";
 function BaseContent (){
+    const {fastviewOpen,setFastViewOpen} = useContext(Context) as contextInterface
     return(
         <>
             <Box className ="app-content" component="main" >
@@ -17,7 +21,8 @@ function BaseContent (){
                                 )
                             })}
                         </Routes>                
-                    </Suspense>                
+                    </Suspense>
+                    <FastView itemId={fastviewOpen.itemId as string} open={fastviewOpen.isOpen} onClose={()=>setFastViewOpen({isOpen:false})}/>                  
                 </Box>
             </Box>        
         </>

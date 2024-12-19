@@ -10,11 +10,12 @@ import { apiResponseInterface, contextInterface} from '../../../../../AppTyscrip
 import { Context } from '../../../../base/ContextWarper';
 import upperCaseFirstLetter from '../../../../../assets/module/upperCaseFirstletter';
 import DataTable from '../../../../extra/DataTable';
-import { Backdrop, Button, Card, CardActions, CardContent, IconButton, LinearProgress } from '@mui/material';
-import { Add, Close, Delete, Edit, Replay } from '@mui/icons-material';
+import {Backdrop, Button, Card, CardActions, CardContent,IconButton, LinearProgress,} from '@mui/material';
+import { Add, Close, Delete, Edit, FastForward, Replay } from '@mui/icons-material';
 import CS from '../../../../../assets/css/component.module.css'
 import { GridRenderCellParams, GridToolbar } from '@mui/x-data-grid';
 import AddForm from './AddForm';
+import FastAddForm from './FastAddForm';
 
 const apiUrl = import.meta.env.VITE_API_URL
 
@@ -26,6 +27,7 @@ export default function DataBase() {
   const [loadding,setLoading] = React.useState(false)
   const [confirm,setConfirm] = React.useState<null|string>(null)
   const [addform,setAddform] = React.useState<{status:boolean,update:number|string|null}>({status:false,update:null})
+  const [fastAdd,setFastAdd] = React.useState(false) 
   const [backdrop,setBackdrop] = React.useState(false)
 
   const closeAddform = {status:false,update:null}
@@ -46,7 +48,7 @@ export default function DataBase() {
       </>
     )
   }
-
+  
   const fetchTable = async(props?:{tableName?:string,deleteRow?:string})=>{
     const {tableName,deleteRow} = props||{}
     try{
@@ -81,7 +83,7 @@ export default function DataBase() {
             fetchTable({tableName:dataTable[tableType]})
           }else{
             setDatatable(resData.data.rows as string[])
-
+            
           }
         } else {
           setSnack({isOpen:true,message:JSON.stringify(resData.data.message)})
@@ -98,7 +100,7 @@ export default function DataBase() {
     }
     setLoading(false)
   }
-
+  
   const CloseBackdrop = ()=>{
     return(
       <>
@@ -106,11 +108,12 @@ export default function DataBase() {
           setBackdrop(false);
           setConfirm(null);
           setAddform(closeAddform);
+          setFastAdd(false)
         }}><Close/></IconButton>
       </>
     )
   }
-
+  
   React.useEffect(()=>{
     fetchTable()
   },[])
@@ -147,6 +150,12 @@ export default function DataBase() {
             <Button size="small" onClick={()=>{setBackdrop(false);setConfirm(null)}}>CANCEL</Button>
           </CardActions>
         </Card>}
+        {fastAdd&&
+        <Box sx={{position:"relative"}}>
+          <CloseBackdrop/>
+          <FastAddForm tableName={dataTable[tableType]}/>
+        </Box>
+        }
         {addform.status&&<Box sx={{position:"relative"}}>
           <CloseBackdrop/>
           <AddForm tableName={dataTable[tableType]} update={addform.update as string}
@@ -181,6 +190,7 @@ export default function DataBase() {
               setLoading(true)
             }}><Replay className={loadding?CS.rotatingElement:""}/></IconButton>
           <IconButton onClick={()=>{setBackdrop(true);setAddform({status:true,update:null});}}><Add/></IconButton>
+          <IconButton onClick={()=>{setBackdrop(true);setFastAdd(true);}}><FastForward/></IconButton>
         </Stack>
         {itemData[dataTable[tableType]]
           ?<DataTable 

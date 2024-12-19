@@ -1,5 +1,5 @@
 import { Accordion, AccordionDetails, AccordionSummary, Backdrop, Box, Button, CircularProgress, Fade, FormControl, Grid2,MenuItem, Pagination, Select,Typography} from "@mui/material";
-import ShopBox from "../../extra/shopCard";
+import ShopBox from "./shopCard";
 import CS from '../../../assets/css/component.module.css'
 import {Close, Done, ExpandMore, FilterListOutlined} from "@mui/icons-material";
 import { useEffect, useRef, useState } from "react";
@@ -7,6 +7,8 @@ import { useTranslation } from "react-i18next";
 import { Moneyslider } from "./moneySlider";
 import { ThemeChecker } from "./themeChecker";
 import fetchData from "../../../assets/module/fecthData";
+import AdBanner from "../../extra/adBanner";
+import {adBannerContent} from './adBannerContent'
 
 const apiUrl = import.meta.env.VITE_API_URL
 interface itemData {
@@ -39,6 +41,7 @@ function Shop(){
     const [avalible,setAvalible] = useState(availabilityOption)
     const [theme,setTheme] = useState(themeOption)
     const [itemData,setItemData] =useState<itemData[]>()
+    
     const originData = useRef<itemData[]>()
     
     
@@ -56,8 +59,6 @@ function Shop(){
         {name:"common.dateSortASC",value:"dateASC"},
         {name:"common.dateSortDESC",value:"dateDES"},
     ]
-
-
 
     const filterOption = [
         {name:"common.availability",format:<ThemeChecker items={avalible} setItems={setAvalible}/>},
@@ -90,7 +91,7 @@ function Shop(){
             }
         }
     }
-
+    
 
     useEffect(()=>{
         getData()
@@ -105,18 +106,10 @@ function Shop(){
             <Box className = "shop" sx={{display:"flex",flexDirection:"column"}}>
                 <Box sx={{
                     backgroundImage:"radial-gradient(circle, rgba(0, 51, 160, 0.3), rgba(0, 31, 63, 0.3))",
-                    display:"flex",flexDirection:"column",
+                    display:"flex",flexDirection:"column",marginBottom:"10px",
                     justifyContent:"center",alignItems:"center",
-                    height:"200px",
                 }}>
-                    <Typography sx={{
-                        textAlign:"center",
-                        fontSize:"2em",
-                        fontWeight:"bolder"
-                    }}>
-                        {t("common.welcomeBanner")}  
-                    </Typography>
-                    <Typography sx={{fontSize:"0.9em"}}>{t("common.welcomeSubBanner")}  </Typography>
+                    <AdBanner item={adBannerContent}/>
                 </Box>
                 <Box className = {filterPos?CS.fixedBox:""} sx={filterPos?{padding:{xs:"0px 20px 0 20px" ,sm:"0px 40px 0 40px",md:"70px 50px 0 50px"}}:{}}>
                     <Box sx={filterPos?{...centerCss,padding:{sm:"0 15px 0 15px",md:"0 30px 0 30px",lg:"0 50px 0 50px"}, }:{}}>
@@ -192,11 +185,20 @@ function Shop(){
                     ...centerCss, 
                     display:"flex",flexDirection:"column",gap:"30px"}}
                     >
-                        <Grid2 container spacing={2} columns={{sm:2,md:2,lg:3,xl:4}} sx={{width:"100%",justifyContent:"center",alignItems:"center"}}>
+                        <Grid2 
+                            container spacing={{xs:1,sm:1,md:2}} 
+                            columns={{xs:1,sm:2,md:3,lg:3,xl:4}} 
+                            sx={{width:"100%",justifyContent:"center",alignItems:"center"}}>
                             {itemData&&itemData.map((item,index)=>{
                                     if(index >= (page-1)*12&&index<page*12){
                                         return<Grid2 key={item.name} size={1}>
-                                            <ShopBox sx={{minWidth:"200px",maxWidth:"500px"}} id={`${item.id}`}  name={item.name} price={item.price} picture={apiUrl+"storage/"+item.image_uploaded_png[0]} sale={(item.sale||1 )* 100} timer={item.timesale}/>
+                                            <ShopBox 
+                                                id={`${item.id}`}  
+                                                name={item.name} 
+                                                price={item.price} 
+                                                picture={apiUrl+"storage/"+item.image_uploaded_png[0]} 
+                                                sale={(item.sale||1 )* 100} 
+                                                timer={item.timesale}/>
                                         </Grid2>
                                     }
                                 }
@@ -206,7 +208,8 @@ function Shop(){
                             <Pagination count={Math.ceil(itemData.length/12)} page={page} onChange={(_e,value)=>setPage(value)} shape="rounded" />
                         </Box>
                     </Box>:<Box sx={{display: 'flex',alignItems: 'center',justifyContent: 'center',}}><CircularProgress size="30px" /></Box>}
-                </Box>
+                    
+            </Box>
         </>
     )
 }

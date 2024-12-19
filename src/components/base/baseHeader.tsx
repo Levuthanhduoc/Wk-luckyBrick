@@ -246,7 +246,7 @@ function BaseHeader(){
 
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
-      <Typography variant="h6" sx={{ my: 2 }}>
+      <Typography variant="h6" sx={{ my: 2,cursor:"pointer"}} onClick={()=>navigate("/")}>
         LUCKY BRICK
       </Typography>
       <Divider />
@@ -319,7 +319,10 @@ function BaseHeader(){
           <Typography
             variant="h6"
             component="div"
-            sx={{ flexGrow: 1, display: 'block' }}
+            fontFamily={'Modak'}
+            fontSize={"1.6rem"}
+            sx={{ flexGrow: 1, display: 'block' ,cursor:"pointer"}}
+            onClick={()=>navigate("/")}
             >
             LUCKY BRICK
           </Typography>

@@ -12,7 +12,8 @@ interface propsType{
 const spectification:{[key:string]:string} = {
     "png":"image/jpeg, image/png, image/webp",
     "pdf":"application/pdf",
-    "zip":"application/zip"
+    "zip":"application/zip",
+    "json":"application/JSON",
 }
 
 const apiUrl = import.meta.env.VITE_API_URL

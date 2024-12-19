@@ -11,6 +11,11 @@ interface cartType{
     [key:string]:string
 }
 
+interface fastview{
+    isOpen:boolean,
+    itemId?:string,
+}
+
 interface contextInterface{
     snack:snackInterface,
     setSnack:Dispatch<SetStateAction<snackInterface>>,
@@ -18,6 +23,8 @@ interface contextInterface{
     setLogin:Dispatch<SetStateAction<boolean>>,
     cart:cartType[],
     setCart:Dispatch<SetStateAction<cartType[]>>,
+    fastviewOpen:fastview,
+    setFastViewOpen:Dispatch<SetStateAction<fastview>>,
 }
 
 interface apiResponseInterface{

@@ -12,7 +12,7 @@ const Signup = React.lazy(()=>import("./components/sign-up/SignUp"))
 const ShopCart = React.lazy(()=>import("./components/content/shopCart/shopCart"))
 
 export default [
-    {path:"/",alt:"Home",element:<Shop/>},
+    {path:"/",alt:"Home",element:<Home/>},
     {path:"/home",alt:"Home",element:<Home/>}, 
     {path:"/shop",alt:"Shop",element:<Shop/>}, 
     {path:"/shop/:id",alt:"Shop detail id",element:<ShopDetail/>},

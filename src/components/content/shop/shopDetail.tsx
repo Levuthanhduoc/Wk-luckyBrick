@@ -1,10 +1,19 @@
-import { Box, Button, Divider, Fade, FormControl, IconButton, MenuItem, Rating, Select, Stack, SxProps, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs, TextField, Typography } from "@mui/material"
+import { 
+    Box, Button, Divider, Fade, FormControl,
+    IconButton, LinearProgress, MenuItem, Rating, Select, Stack, SxProps, Tab, 
+    Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+    Tabs, Tooltip, Typography 
+} from "@mui/material"
 import Breakcrumb from "../../extra/breadcrumb"
-import { SyntheticEvent, useContext, useEffect, useState } from "react"
+import { FormEvent, SyntheticEvent, useContext, useEffect, useState } from "react"
 import PictureShowCase from "../../extra/pictureShowCase"
 import CountDown from "../../extra/countDownTimer"
 import CS from "../../../assets/css/component.module.css"
-import { Add, AddShoppingCart, ArrowForwardIosOutlined, ArticleOutlined, FavoriteBorder, GppGoodOutlined,LocalShippingOutlined, Remove, Send } from "@mui/icons-material"
+import { 
+    Add, AddShoppingCart, ArrowForwardIosOutlined, 
+    ArticleOutlined, FavoriteBorder, Feedback, 
+    GppGoodOutlined,LocalShippingOutlined, Remove
+} from "@mui/icons-material"
 
 import paypalIcon from '../../../assets/image/icon/paypal.png';
 import masterCardIcon from '../../../assets/image/icon/Mastercard.png';
@@ -14,13 +23,18 @@ import zalopayIcon from '../../../assets/image/icon/zalo.png';
 import ProcessBar from "../../extra/processBar"
 import { useParams } from "react-router-dom"
 import fetchData from "../../../assets/module/fecthData"
-import { getHtml } from "../../extra/richTextForm"
+import { getHtml, RichTextForm } from "../../extra/richTextForm"
 import { JSONContent } from "@tiptap/core"
 import Parser from 'html-react-parser';
 import AddToCart from "../../../assets/module/addtoCart"
 import { Context } from "../../base/ContextWarper"
-import { contextInterface } from "../../../AppTyscript"
+import { apiResponseInterface, contextInterface } from "../../../AppTyscript"
 import isSale from "../../../assets/module/isSale"
+import TextForm from "../../extra/textForm"
+import RatingForm from "../../extra/ratingForm"
+import ReviewBox from "./reviewBox"
+import setUserLog from "../../../assets/module/setUserLog"
+import ShowCaseBox from "../home/showCaseBox"
 
 interface TabContentProps {
     children?: React.ReactNode,
@@ -41,6 +55,27 @@ interface itemsData  {
     serial:string,
     category:string,
     timesale:string
+}
+
+interface itemData {
+    id:number|string,
+    name:string,
+    price:number,
+    image_uploaded_png:string,
+    sale?:number,
+    timesale?:string,
+}
+
+interface reviewData{
+    total:number,
+    detail:number[],
+    review?:{
+        name:string,
+        title:string,
+        rating:string,
+        comment:JSONContent,
+        time:string
+    }[]
 }
 const apiUrl = import.meta.env.VITE_API_URL
 const centerCss = {
@@ -71,6 +106,10 @@ function ShopDetail(){
     const [isReviewOn,setReviewOn] = useState(false)
     const contextItem = useContext(Context) as contextInterface
     const [itemData,setItemData] = useState<itemsData>()
+    const isCurrentSale = isSale(itemData?.timesale||(new Date().toISOString()))
+    const [formErrorMessage,setFormErrorMessage] = useState<string|null>(null)
+    const [reviewData,setReviewData] = useState<reviewData|null>(null)
+    const [recentItem,setRecentItem] = useState<itemData[]>()
 
     const paymentMethod = [
         {name:"master card",icon:masterCardIcon},
@@ -94,11 +133,6 @@ function ShopDetail(){
         {name:"Date - oldest first",value:"dateASC"},
         {name:"Date - newest first",value:"dateDES"},
     ]
-
-    const reviewData = {
-        total:152,
-        detail:[7,2,7,11,125]
-    }
 
     const calculateAverageScore=(total:number,items:number[],option?:{reverse:boolean})=>{
         let allItem = [...items]
@@ -124,11 +158,95 @@ function ShopDetail(){
             }
         }
     }
+    const getReview = async ()=>{
+        if(apiUrl){
+            try {
+                const result = await fetchData({url:apiUrl +`legos/review?id=${id}`,
+                    methoud:"get"}) as {[key:string]:reviewData[]}
+                if(result.status){
+                    const resData = result 
+                    const rowsData = resData.rows as reviewData[]
+                    setReviewData(rowsData[0])
+                    setReviewScore(calculateAverageScore(rowsData[0].total,rowsData[0].detail,{reverse:false}))
+                }else{
+                    setReviewData({
+                        total:0,
+                        detail:[0,0,0,0,0],
+                    })
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        }
+    }
+    const onSubmit = async (e:FormEvent<HTMLFormElement>)=>{
+        e.preventDefault()
+        const submitData = new FormData(e.currentTarget)
+        const name = submitData.get("name")
+        const title = submitData.get("title")
+        const rating = submitData.get("rating")
+        const comment = submitData.get("comment") as string
+        let errorMessage = ""
+        if(!name){
+            errorMessage = "Name must not be empty"
+        }else if(!title){
+            errorMessage = "Title must not be empty"
+        }else if(!comment || !comment.match(/"text":/)){
+            errorMessage = "Comment must not be empty"
+        }else if(!rating){
+            errorMessage = "Rating must not be empty"
+        }
+        if(errorMessage !=""){
+            setFormErrorMessage(errorMessage)
+        }else{
+            submitData.append("id",`${id}`)
+            setFormErrorMessage(null)
+            try {
+                const result = await fetch( apiUrl + 'legos/review', {
+                    method: 'POST',
+                    body: submitData,
+                    credentials: 'include',
+                })
+                if (result.ok) {
+                    const resData = await result.json() as apiResponseInterface
+                    if(resData.status){
+                        setReviewOn(false)
+                    }else{
+                        setFormErrorMessage(resData.data.message[0])
+                    }
+                }
+            } catch (error) {
+                setFormErrorMessage("Network error please try again")
+            }
+        }
+    }
+    const getRecentData = async ()=>{
+        const recentItemsString = localStorage.getItem("recentLegos")
+        if(!recentItemsString){
+            return
+        }
+        const recentItemsJson = JSON.parse(recentItemsString)
+        setRecentItem(recentItemsJson.data)
+    }
+
     useEffect(()=>{
         getData()
+        getRecentData()
+        getReview()
     },[id])
+    
     useEffect(()=>{
-        setReviewScore(calculateAverageScore(reviewData.total,reviewData.detail,{reverse:false}))
+        if(itemData){
+            const userLog = {
+                id:itemData.id,
+                name:itemData.name,
+                price:itemData.price,
+                image_uploaded_png:itemData.image_uploaded_png,
+                sale:itemData.sale,
+                timesale:itemData.timesale,
+            }
+            setUserLog(userLog)
+        }
     },[itemData])
     return(
         <>
@@ -137,16 +255,16 @@ function ShopDetail(){
                 {itemData&&<>
                 <Box sx={{display:"flex",flexDirection:{xs:"column",sm:"column",md:"row"},gap:"15px",width:"100%"}}>
                     <Box sx={{flex:1,display:"flex",justifyContent:"center"}}>
-                        <PictureShowCase sx={{width:"100%",height:"500px",gap:"5px"}} pictures={itemData.image_uploaded_png.map((img)=>apiUrl +"storage/"+ img)}/>
+                        <PictureShowCase sx={{width:"100%",height:"500px",gap:"10px"}} pictures={itemData.image_uploaded_png.map((img)=>apiUrl +"storage/"+ img)}/>
                     </Box>
                     <Box sx={{flex:1,display:"flex",flexDirection:"column", gap:"10px",padding:"0 15px 0 15px"}}>
                         <Typography sx={{fontSize: {md:"26px",lg:"28px"},lineHeight: {md:"31.2px",lg:"33.6px"}}}>{itemData.name}</Typography>
                         <Box display={"flex"} flexDirection={"row"} alignItems={"center"} gap={"15px"} sx={{fontSize: "20px",lineHeight: "20px"}}>
                             <Typography sx={{color:"#B22222", fontSize: "28px",lineHeight: "28px"}} >${itemData.price - (itemData.price*itemData.sale)}</Typography>
-                            <Typography sx={{textDecoration:"line-through",color: "rgba(211, 211, 211, 0.55)",fontSize: "20px",lineHeight: "20px"}}>${itemData.price}</Typography>
-                            {isSale(itemData.timesale)&&<Box className={CS.salePill}>- {itemData.sale*100}%</Box>}
+                            {isCurrentSale&&<Typography sx={{textDecoration:"line-through",color: "rgba(211, 211, 211, 0.55)",fontSize: "20px",lineHeight: "20px"}}>${itemData.price}</Typography>}
+                            {isCurrentSale&&<Box className={CS.salePill}>- {itemData.sale*100}%</Box>}
                         </Box>
-                        {isSale(itemData.timesale)&&<Box sx={{
+                        {isCurrentSale&&<Box sx={{
                             display: "inline-block",
                             padding: {xs:"8px 15px",sm:"16px 30px"},
                             border: "1px solid #B22222",
@@ -165,7 +283,7 @@ function ShopDetail(){
                             </Box>
                         </Box>
                         <Box>
-                            <Button sx={{backgroundColor:"black" ,color:"white"}} 
+                            <Button variant="outlined" color="error" sx={{color:"#B22222"}} 
                                 onClick={()=>AddToCart({
                                     id:`${itemData.id}`,
                                     name:itemData.name,
@@ -176,7 +294,7 @@ function ShopDetail(){
                                     picture:apiUrl+"storage/"+itemData.image_uploaded_png[0],
                                     },contextItem
                                 )}>
-                                <Typography sx={{padding:"8px 8px 4px 8px"}}>Add to cart</Typography>
+                                <Typography fontWeight={"600"} sx={{padding:"8px 8px 4px 8px"}}>Add to cart</Typography>
                                 <AddShoppingCart/>
                             </Button>
                             <IconButton>
@@ -184,14 +302,14 @@ function ShopDetail(){
                             </IconButton>
                         </Box>     
                         <Divider orientation="horizontal" flexItem />
-                        <Button sx={{display:"flex",justifyContent:"space-between"}}>
+                        <Button sx={{display:"flex",justifyContent:"space-between",color:"inherit"}}>
                                 <Stack direction={"row"} gap={"10px"}>
                                     <LocalShippingOutlined/><Typography>Deliveries and Returns</Typography>
                                 </Stack>
                                 <ArrowForwardIosOutlined/>
                         </Button>
                         <Divider orientation="horizontal" flexItem />
-                        <Button sx={{display:"flex",justifyContent:"space-between"}}>
+                        <Button sx={{display:"flex",justifyContent:"space-between",color:"inherit"}}>
                             <Stack direction={"row"} gap={"10px"}>
                                 <ArticleOutlined/><Typography>Building Instructions</Typography>
                             </Stack>
@@ -244,7 +362,7 @@ function ShopDetail(){
                         </TabContent>
                         {/* review tab */}
                         <TabContent value={tab} index={2}>
-                            <Stack direction={{xs:"column",md:"row"}} padding={"0 0 40px 0"}>
+                            {reviewData?<><Stack direction={{xs:"column",md:"row"}} padding={"0 0 40px 0"}>
                                 <Stack padding={{xs:"0 0 40px 0",md:"0"}}>
                                     <Typography>
                                         Overall Rating
@@ -272,23 +390,43 @@ function ShopDetail(){
                             <Divider orientation="horizontal" flexItem />
                             <Stack padding={{xs:"40px 0 40px 0"}}>
                                 <Stack gap={"10px"}>
-                                    {!isReviewOn?<Button onClick={()=>setReviewOn(true)}>Leave a review</Button>:
-                                    <Box sx={{width:"100%",position:"relative"}}>
-                                        <TextField id="outlined-basic" sx={{width:"100%"}} label="Review" rows={5} variant="outlined" multiline/>
-                                        <IconButton sx={{position:"absolute",bottom:0,right:0}} onClick={()=>setReviewOn(false)}>
-                                            <Send/>
-                                        </IconButton>
-                                    </Box>}
-                                    <FormControl size="small">
-                                        <Select sx={{padding:"0"}} value={selectSort} onChange={(e)=>{setSort(e.target.value)}} id={"sortOption"}>
-                                            {reviewSortOption.map((item)=><MenuItem key={item.name} value={item.value}>{item.name}</MenuItem>)}
-                                        </Select>
-                                    </FormControl>
+                                    <Stack flexDirection={"row"} justifyContent={"space-between"}>
+                                        <FormControl size="small" sx={isReviewOn?{display:"flex",flexDirection:"row",justifyContent:"left"}:{}}>
+                                            <Select sx={{padding:"0",maxWidth:"200px"}} value={selectSort} onChange={(e)=>{setSort(e.target.value)}} id={"sortOption"}>
+                                                {reviewSortOption.map((item)=><MenuItem key={item.name} value={item.value}>{item.name}</MenuItem>)}
+                                            </Select>
+                                        </FormControl>
+                                        <Tooltip title="Leave a FeedBack">
+                                            <Button sx={{maxWidth:"200px"}} variant={isReviewOn?"outlined":"contained"} onClick={()=>setReviewOn(!isReviewOn)}>{<Feedback/>}</Button>
+                                        </Tooltip>
+                                    </Stack>
+                                    <Divider/>
+                                   {isReviewOn&&<><Box component={"form"} onSubmit={onSubmit} sx={{width:"100%",position:"relative"}}
+                                        gap={"10px"} display={"flex"} flexDirection={"column"}
+                                    >   
+                                        {formErrorMessage&&<Typography color="#E74C3C">*{formErrorMessage}</Typography>}
+                                        <Typography fontSize={"1.5em"} fontWeight={600}>Write a Feedback</Typography>
+                                        <Stack direction={{xs:"column",md:"row"}} gap={"5px"}>
+                                            <TextForm name="name"/>
+                                            <TextForm name="title"/>
+                                        </Stack>
+                                        <RichTextForm name="comment"/>
+                                        <Stack direction={"row"} justifyContent={"space-between"}>
+                                            <RatingForm sx={{display:"flex",justifyContent:"center",alignItems:"center"}} name="rating"/>
+                                            <Button type="submit" variant="contained">
+                                                Submit
+                                            </Button>
+                                        </Stack>
+                                    </Box><Divider/></>}
+                                    <Stack gap={"10px"}>
+                                        {reviewData.review?.map((item)=><ReviewBox key={item.name+item.time} {...item}/>)}
+                                    </Stack>
                                 </Stack>
-                            </Stack>
+                            </Stack></>:<LinearProgress/>}
                         </TabContent>
                     </Box>
                 </Box></>}
+                {recentItem&&<ShowCaseBox title="Recently Explored" item={recentItem}/>}
             </Box>
         </>
     )

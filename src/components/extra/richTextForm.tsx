@@ -29,7 +29,7 @@ import {
 import {useRef, useState } from "react";
 import { FormControl, FormLabel, SxProps, TextField } from "@mui/material"
 import upperCaseFirstLetter from "../../assets/module/upperCaseFirstletter"
-import { generateHTML, JSONContent } from '@tiptap/core';
+import { generateHTML, JSONContent,Editor } from '@tiptap/core';
 
 interface propsType{
     sx?:SxProps,
@@ -45,6 +45,15 @@ const extensions = [StarterKit,TextStyle,FontSize,Color,Highlight.configure({
 
 export const getHtml = (jsonString:JSONContent)=>{
     const result = generateHTML(jsonString, extensions)
+    return result
+}
+
+export const getJson = (htmlString:string)=>{
+    const editor = new Editor({
+        content: htmlString,
+        extensions: extensions,
+      });
+    const result = editor.getJSON()
     return result
 }
 
